@@ -1,20 +1,8 @@
 #include "test.hpp"
 // c++ parsetest.cpp parse.cpp libglfw3.a -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1
-const GLint WIDTH = 1600, HEIGHT = 1200;
+const GLint WIDTH = 800, HEIGHT = 600;
+const float SPEED = 0.02;
 void parse(char *filename, t_data *data);
-
-std::string readShaderFile(std::string filename, t_data *data)
-{
-	std::ifstream infile(filename);
-	std::string line, file;
-	while (infile)
-	{
-		std::getline(infile, line);
-		if (infile)
-			file += line + "\n";
-	}
-	return file;
-}
 
 void init(t_data *data)
 {
@@ -27,8 +15,9 @@ void init(t_data *data)
 	data->rot[0] = 0;
 	data->rot[1] = 0;
 	data->rot[2] = 0;
-	data->vertexShaderSource = readShaderFile("vertexshader.glsl", data);
-	data->fragmentShaderSource = readShaderFile("fragmentshader.glsl", data);
+	data->mov[0] = 0;
+	data->mov[1] = 0;
+	data->mov[2] = 0;
 }
 
 GLFWwindow *createWindow()
@@ -38,7 +27,7 @@ GLFWwindow *createWindow()
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 	if (nullptr == window)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		std::cerr << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -90,23 +79,30 @@ void processInput(GLFWwindow *window, t_data *data)
 		if (data->rot[2] < 0)
 			data->rot[2] += 360;
 	}
-}
-
-unsigned int createShader(unsigned int type, const char *src)
-{
-	unsigned int i = glCreateShader(type);
-	glShaderSource(i, 1, &src, NULL);
-	glCompileShader(i);
-	int success;
-	char infoLog[512];
-	glGetShaderiv(i, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(i, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n"
-				  << infoLog << std::endl;
+	key = glfwGetKey(window, GLFW_KEY_W);
+	if (key == GLFW_PRESS) {
+		data->mov[1] -= SPEED;
 	}
-	return (i);
+	key = glfwGetKey(window, GLFW_KEY_S);
+	if (key == GLFW_PRESS) {
+		data->mov[1] += SPEED;
+	}
+	key = glfwGetKey(window, GLFW_KEY_A);
+	if (key == GLFW_PRESS) {
+		data->mov[0] += SPEED;
+	}
+	key = glfwGetKey(window, GLFW_KEY_D);
+	if (key == GLFW_PRESS) {
+		data->mov[0] -= SPEED;
+	}
+	key = glfwGetKey(window, GLFW_KEY_I);
+	if (key == GLFW_PRESS) {
+		data->mov[2] += SPEED;
+	}
+	key = glfwGetKey(window, GLFW_KEY_O);
+	if (key == GLFW_PRESS) {
+		data->mov[2] -= SPEED;
+	}
 }
 
 void terminate()
@@ -119,7 +115,6 @@ void normalize_delete_this(std::vector<float> *vertices)
 	float max = *(std::max_element(vertices->begin(), vertices->end()));
 	float min = *(std::min_element(vertices->begin(), vertices->end()));
 	float factor = (min * -1 > max) ? 0.9 / min : 0.9 / max;
-	// std::cerr << factor << std::endl;
 	for (std::vector<float>::iterator it = vertices->begin(); it != vertices->end(); it++)
 		*it *= factor;
 }
@@ -197,41 +192,15 @@ void rotZ(float a, float mat[4][4])
 int main()
 {
 	t_data data;
-	std::string path("resources/teapot2.obj");
+	std::string path("./resources/42.obj");
 	// char *path = "resources/teapot2.obj";
 	init(&data);
 	parse(path, &data);
 	normalize_delete_this(&(data.v_vertices));
-	// for (std::vector<float>::iterator it = data.v_vertices.begin(); it != data.v_vertices.end(); it++)
-	// 	(*it) /= 4;
-	// std::cerr << data.v_faces.size() << std::endl;
-	// std::cerr << data.v_vertices.size() << std::endl;
-	// std::cerr << data.v_indices.size() << std::endl;
-	// for (std::vector<t_face>::iterator it = data.v_faces.begin(); it != data.v_faces.end(); it++)
-	// 	std::cerr << (*it).size;
-	// std::cerr << std::endl;
-	// std::cerr << *(std::max_element(data.v_vertices.begin(), data.v_vertices.end())) << std::endl;
-	// std::cerr << *(std::min_element(data.v_vertices.begin(), data.v_vertices.end())) << std::endl;
 	GLFWwindow *window = createWindow();
+	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
 
 	// TEMP BLOCK START
-	//  Create vertex and fragment shader
-	unsigned int vertexShader = createShader(GL_VERTEX_SHADER, data.vertexShaderSource.c_str());
-	unsigned int fragmentShader = createShader(GL_FRAGMENT_SHADER, data.fragmentShaderSource.c_str());
-	// Create shader program by combining both
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	// Delete shader objects as they're not needed anymore
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	// for (int i=0; i<10932; i++)
-	// 	vertices[i] /= 4;
-	// for (int i=0; i<18960; i++)
-	// 	indices[i] -= 1;
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -245,50 +214,58 @@ int main()
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.v_indices.size() * sizeof(int), &(data.v_indices[0]), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	// float transformX[4][4] = {
-	// 	{1, 0, 0, 0},
-	// 	{0, 0.8660, -0.5, 0},
-	// 	{0, 0.5, 0.8660, 0},
-	// 	{0, 0, 0, 1}};
-	// float transformY[4][4] = {
-	// 	{0.8660, 0, 0.5, 0},
-	// 	{0, 1, 0, 0},
-	// 	{-0.5, 0, 0.8660, 0},
-	// 	{0, 0, 0, 1}};
-	// float transformZ[4][4] = {
-	// 	{0.8660, -0.5, 0, 0},
-	// 	{0.5, 0.8660, 0, 0},
-	// 	{0, 0, 1, 0},
-	// 	{0, 0, 0, 1}};
 	float transformX[4][4];
 	float transformY[4][4];
 	float transformZ[4][4];
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)WIDTH/(float)HEIGHT, 0.1f, 100.0f);
+
+	glEnable(GL_DEPTH_TEST);
 	// TEMP BLOCK END
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window, &data);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Render
-		glUseProgram(shaderProgram);
-		// translate += 0.001;
-		rotX(data.rot[0], transformX);
-		rotY(data.rot[1], transformY);
-		rotZ(data.rot[2], transformZ);
-		int rotXLocation = glGetUniformLocation(shaderProgram, "rotX");
-		glUniformMatrix4fv(rotXLocation, 1, GL_FALSE, &transformX[0][0]);
-		int rotYLocation = glGetUniformLocation(shaderProgram, "rotY");
-		glUniformMatrix4fv(rotYLocation, 1, GL_FALSE, &transformY[0][0]);
-		int rotZLocation = glGetUniformLocation(shaderProgram, "rotZ");
-		glUniformMatrix4fv(rotZLocation, 1, GL_FALSE, &transformZ[0][0]);
+		// glUseProgram(shaderProgram);
+		shader.use();
+		// rotX(data.rot[0], transformX);
+		// rotY(data.rot[1], transformY);
+		// rotZ(data.rot[2], transformZ);
+		// int rotXLocation = glGetUniformLocation(shader.getId(), "rotX");
+		// glUniformMatrix4fv(rotXLocation, 1, GL_FALSE, &transformX[0][0]);
+		// int rotYLocation = glGetUniformLocation(shader.getId(), "rotY");
+		// glUniformMatrix4fv(rotYLocation, 1, GL_FALSE, &transformY[0][0]);
+		// int rotZLocation = glGetUniformLocation(shader.getId(), "rotZ");
+		// glUniformMatrix4fv(rotZLocation, 1, GL_FALSE, &transformZ[0][0]);
+		model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(data.rot[0]), glm::vec3(1.0f, 0.0f, 0.0f)); 
+		model = glm::rotate(model, glm::radians(data.rot[1]), glm::vec3(0.0f, 1.0f, 0.0f)); 
+		model = glm::rotate(model, glm::radians(data.rot[2]), glm::vec3(0.0f, 1.0f, 1.0f));
+		view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(data.mov[0], data.mov[1], data.mov[2] - 3.0f)); 
+
+		// view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+		// int movLocation = glGetUniformLocation(shader.getId(), "mov");
+		// glUniform3f(movLocation, data.mov[0], data.mov[1], data.mov[2]);
+		int modelLocation = glGetUniformLocation(shader.getId(), "model");
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &model[0][0]);
+		int viewLocation = glGetUniformLocation(shader.getId(), "view");
+		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
+		int projLocation = glGetUniformLocation(shader.getId(), "proj");
+		glUniformMatrix4fv(projLocation, 1, GL_FALSE, &proj[0][0]);
 		// update the uniform color
-		float timeValue = glfwGetTime();
-		float greenValue = sin(timeValue) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		int vertexColorLocation = glGetUniformLocation(shader.getId(), "ourColor");
 		glBindVertexArray(VAO);
+		glUniform4f(vertexColorLocation, 0.0f, 0.0f, 0.0f, 1.0f);
+		for (std::vector<t_face>::iterator it = data.v_faces.begin(); it != data.v_faces.end(); it++)
+			glDrawElements(GL_TRIANGLE_FAN, (*it).size, GL_UNSIGNED_INT, (void *)((*it).offset * sizeof(GLuint)));
+		glUniform4f(vertexColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
 		for (std::vector<t_face>::iterator it = data.v_faces.begin(); it != data.v_faces.end(); it++)
 			glDrawElements(GL_LINE_LOOP, (*it).size, GL_UNSIGNED_INT, (void *)((*it).offset * sizeof(GLuint)));
 		glBindVertexArray(0);
@@ -296,6 +273,5 @@ int main()
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
-
 	terminate();
 }

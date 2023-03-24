@@ -22,7 +22,9 @@ static std::vector<std::string> my_split(std::string line, char del) {
 }
 
 void parse(std::string filename, t_data *data) {
-	std::ifstream infile(filename);
+	// std::ifstream infile(filename);
+	std::ifstream infile;
+	infile.open(filename);
 	std::string line;
 	std::vector<std::string> v_file;
 	std::vector<std::vector<std::string> > v_lines;

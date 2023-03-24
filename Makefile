@@ -6,17 +6,18 @@ LIBS = libglfw3.a
 
 CC = c++
 
-CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1
+CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1# -g -fsanitize=address
 
 all: $(NAME)
 
 $(NAME): $(SRCS)
-		$(CC) $(SRCS) $(LIBS) $(CFLAGS) -o $(NAME)
+		$(CC) -o $(NAME) $(SRCS) $(LIBS) $(CFLAGS) 
 
 clean:
 	@$(RM) $(NAME)
 
 fclean: clean
+	@$(RM) -rf $(NAME).dSYM
 
 re: fclean all
 

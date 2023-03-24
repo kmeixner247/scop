@@ -11,6 +11,7 @@ public:
 	~Shader();
 	Shader &operator=(const Shader &rhs);
 	void use();
+	unsigned int getId();
 private:
 	unsigned int _id;
 };

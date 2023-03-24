@@ -5,6 +5,7 @@ Shader::Shader() : _id(0){}
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 	unsigned int v, f;
 	const char *vertexSource, *fragmentSource;
+	std::string vertexString, fragmentString;
 	try {
 		std::ifstream vertexFile(vertexPath), fragmentFile(fragmentPath);
 		std::stringstream vertexStream, fragmentStream;
@@ -12,14 +13,16 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 		fragmentStream << fragmentFile.rdbuf();	
 		vertexFile.close();
 		fragmentFile.close();
-		vertexSource = vertexStream.str().c_str();
-		fragmentSource = fragmentStream.str().c_str();
+		vertexString = vertexStream.str();
+		fragmentString = fragmentStream.str();
+		vertexSource = vertexString.c_str();
+		fragmentSource = fragmentString.c_str();
 	}
 	catch (std::ifstream::failure e) {
 		std::cerr << "ERROR: Error while reading shader files: " << e.what() << std::endl;
 	}
 	v = glCreateShader(GL_VERTEX_SHADER);
-	v = glCreateShader(GL_FRAGMENT_SHADER);
+	f = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(v, 1, &vertexSource, NULL);
 	glShaderSource(f, 1, &fragmentSource, NULL);
 	
@@ -30,7 +33,7 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 	if(!status)
 	{
 		glGetShaderInfoLog(v, 512, NULL, infoLog);
-		std::cout << "ERROR: Vertex shader compilation failed\n" << infoLog << std::endl;
+		std::cerr << "ERROR: Vertex shader compilation failed\n" << infoLog << std::endl;
 	};
 
 	glCompileShader(f);
@@ -38,7 +41,7 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 	if(!status)
 	{
 		glGetShaderInfoLog(f, 512, NULL, infoLog);
-		std::cout << "ERROR: Fragment shader compilation failed\n" << infoLog << std::endl;
+		std::cerr << "ERROR: Fragment shader compilation failed\n" << infoLog << std::endl;
 	};
 	this->_id = glCreateProgram();
 	glAttachShader(this->_id, v);
@@ -48,7 +51,7 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 	if(!status)
 	{
 		glGetProgramInfoLog(this->_id, 512, NULL, infoLog);
-		std::cout << "ERROR: Shader linking failed\n" << infoLog << std::endl;
+		std::cerr << "ERROR: Shader linking failed\n" << infoLog << std::endl;
 	}
 	glDeleteShader(v);
 	glDeleteShader(f);
@@ -67,4 +70,8 @@ Shader::~Shader() {}
 
 void Shader::use() {
 	glUseProgram(this->_id);
+}
+
+unsigned int Shader::getId(){
+	return this->_id;
 }
