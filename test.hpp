@@ -11,6 +11,7 @@
 #include <vector>
 #include <math.h>
 #include "Shader.hpp"
+#include "GLFW.hpp"
 typedef struct s_face
 {
 	int offset;
@@ -25,6 +26,12 @@ typedef struct s_data
 	float rot[3];
 	float mov[3];
 	float lol;
+	float minX;
+	float minY;
+	float minZ;
+	float maxX;
+	float maxY;
+	float maxZ;
 } t_data;
 
 void parse(std::string filename, t_data *data);

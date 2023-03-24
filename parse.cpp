@@ -47,9 +47,24 @@ void parse(std::string filename, t_data *data) {
 			// data->v_vertices.push_back(std::stof((*it).at(1)));
 			// data->v_vertices.push_back(std::stof((*it).at(2)));
 			// data->v_vertices.push_back(std::stof((*it).at(3)));
-			data->v_vertices.push_back(std::stof((*it).at(1)));
-			data->v_vertices.push_back(std::stof((*it).at(2)));
-			data->v_vertices.push_back(std::stof((*it).at(3)));
+			float fX = std::stof((*it).at(1));
+			float fY = std::stof((*it).at(2));
+			float fZ = std::stof((*it).at(3));
+			if (fX > data->maxX)
+				data->maxX = fX;
+			if (fX < data->minX)
+				data->minX = fX;
+			if (fY > data->maxY)
+				data->maxY = fY;
+			if (fY < data->minY)
+				data->minY = fY;
+			if (fZ > data->maxZ)
+				data->maxZ = fZ;
+			if (fZ < data->minZ)
+				data->minZ = fZ;
+			data->v_vertices.push_back(fX);
+			data->v_vertices.push_back(fY);
+			data->v_vertices.push_back(fZ);
 		}
 		if (!(*it).at(0).compare("f")){
 			t_face face;

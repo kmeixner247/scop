@@ -6,35 +6,18 @@ void parse(char *filename, t_data *data);
 
 void init(t_data *data)
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	data->rot[0] = 0;
 	data->rot[1] = 0;
 	data->rot[2] = 0;
 	data->mov[0] = 0;
 	data->mov[1] = 0;
 	data->mov[2] = 0;
-}
-
-GLFWwindow *createWindow()
-{
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "fine I'm changing the name", nullptr, nullptr);
-	int screenWidth, screenHeight;
-	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-	if (nullptr == window)
-	{
-		std::cerr << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
-	glfwMakeContextCurrent(window);
-	// Define the viewport dimensions
-	glViewport(0, 0, screenWidth, screenHeight);
-	return window;
+	data->minX = 2e30;
+	data->minY = 2e30;
+	data->minZ = 2e30;
+	data->maxX = -2e30;
+	data->maxY = -2e30;
+	data->maxZ = -2e30;
 }
 
 void processInput(GLFWwindow *window, t_data *data)
@@ -105,11 +88,6 @@ void processInput(GLFWwindow *window, t_data *data)
 	}
 }
 
-void terminate()
-{
-	glfwTerminate();
-}
-
 void normalize_delete_this(std::vector<float> *vertices)
 {
 	float max = *(std::max_element(vertices->begin(), vertices->end()));
@@ -119,85 +97,39 @@ void normalize_delete_this(std::vector<float> *vertices)
 		*it *= factor;
 }
 
-void rotX(float a, float mat[4][4])
-{
-	a = a * (M_PI / 180);
-	mat[0][0] = 1;
-	mat[0][1] = 0;
-	mat[0][2] = 0;
-	mat[0][3] = 0;
-
-	mat[1][0] = 0;
-	mat[1][1] = cos(a);
-	mat[1][2] = sin(a) * -1;
-	mat[1][3] = 0;
-
-	mat[2][0] = 0;
-	mat[2][1] = sin(a);
-	mat[2][2] = cos(a);
-	mat[2][3] = 0;
-
-	mat[3][0] = 0;
-	mat[3][1] = 0;
-	mat[3][2] = 0;
-	mat[3][3] = 1;
-}
-void rotY(float a, float mat[4][4])
-{
-	a = a * (M_PI / 180);
-	mat[0][0] = cos(a);
-	mat[0][1] = 0;
-	mat[0][2] = sin(a);
-	mat[0][3] = 0;
-
-	mat[1][0] = 0;
-	mat[1][1] = 1;
-	mat[1][2] = 0;
-	mat[1][3] = 0;
-
-	mat[2][0] = sin(a) * -1;
-	mat[2][1] = 0;
-	mat[2][2] = cos(a);
-	mat[2][3] = 0;
-
-	mat[3][0] = 0;
-	mat[3][1] = 0;
-	mat[3][2] = 0;
-	mat[3][3] = 1;
-}
-void rotZ(float a, float mat[4][4])
-{
-	a = a * (M_PI / 180);
-	mat[0][0] = cos(a);
-	mat[0][1] = sin(a) * -1;
-	mat[0][2] = 0;
-	mat[0][3] = 0;
-
-	mat[1][0] = sin(a);
-	mat[1][1] = cos(a);
-	mat[1][2] = 0;
-	mat[1][3] = 0;
-
-	mat[2][0] = 0;
-	mat[2][1] = 0;
-	mat[2][2] = 1;
-	mat[2][3] = 0;
-
-	mat[3][0] = 0;
-	mat[3][1] = 0;
-	mat[3][2] = 0;
-	mat[3][3] = 1;
+void another_temp(t_data *data) {
+	float temp;
+	temp = data->maxX - data->minX;
+	temp = temp < 0 ? -temp : temp;
+	data->mov[0] = temp/2 - data->maxX;
+	temp = data->maxY - data->minY;
+	temp = temp < 0 ? -temp : temp;
+	data->mov[1] = temp/2 - data->maxY;
+	temp = data->maxZ - data->minZ;
+	temp = temp < 0 ? -temp : temp;
+	data->mov[2] = temp/2 - data->maxZ;
+	std::cout << data->maxX << " " << data->maxY << " " << data->maxZ << std::endl;
+	std::cout << data->minX << " " << data->minY << " " << data->minZ << std::endl;
+	std::cout << data->mov[0] << " " << data->mov[1] << " " << data->mov[2] << std::endl;
+	for (std::vector<float>::iterator it = data->v_vertices.begin(); it != data->v_vertices.end(); it += 3) {
+		*it += data->mov[0];
+		*(it+1) += data->mov[1];
+		*(it+2) += data->mov[2];
+	}
+	data->mov[0] = 0;
+	data->mov[1] = 0;
+	data->mov[2] = 0;
 }
 
 int main()
 {
 	t_data data;
-	std::string path("./resources/42.obj");
-	// char *path = "resources/teapot2.obj";
+	std::string path("./resources/teapot.obj");
 	init(&data);
 	parse(path, &data);
+	another_temp(&data);
 	normalize_delete_this(&(data.v_vertices));
-	GLFWwindow *window = createWindow();
+	GLFW GLFW(WIDTH, HEIGHT, SPEED);
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
 
 	// TEMP BLOCK START
@@ -214,45 +146,32 @@ int main()
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.v_indices.size() * sizeof(int), &(data.v_indices[0]), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	float transformX[4][4];
-	float transformY[4][4];
-	float transformZ[4][4];
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
 	glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)WIDTH/(float)HEIGHT, 0.1f, 100.0f);
-
+	float col;
+	int step = 2;
 	glEnable(GL_DEPTH_TEST);
 	// TEMP BLOCK END
-	while (!glfwWindowShouldClose(window))
+	while (!GLFW.shouldClose())
 	{
-		processInput(window, &data);
+		// GLFW.processInput(&data);
+		processInput(GLFW.getWindow(), &data);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Render
-		// glUseProgram(shaderProgram);
 		shader.use();
-		// rotX(data.rot[0], transformX);
-		// rotY(data.rot[1], transformY);
-		// rotZ(data.rot[2], transformZ);
-		// int rotXLocation = glGetUniformLocation(shader.getId(), "rotX");
-		// glUniformMatrix4fv(rotXLocation, 1, GL_FALSE, &transformX[0][0]);
-		// int rotYLocation = glGetUniformLocation(shader.getId(), "rotY");
-		// glUniformMatrix4fv(rotYLocation, 1, GL_FALSE, &transformY[0][0]);
-		// int rotZLocation = glGetUniformLocation(shader.getId(), "rotZ");
-		// glUniformMatrix4fv(rotZLocation, 1, GL_FALSE, &transformZ[0][0]);
+
 		model = glm::mat4(1.0f);
 		model = glm::rotate(model, glm::radians(data.rot[0]), glm::vec3(1.0f, 0.0f, 0.0f)); 
 		model = glm::rotate(model, glm::radians(data.rot[1]), glm::vec3(0.0f, 1.0f, 0.0f)); 
-		model = glm::rotate(model, glm::radians(data.rot[2]), glm::vec3(0.0f, 1.0f, 1.0f));
+		model = glm::rotate(model, glm::radians(data.rot[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 		view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(data.mov[0], data.mov[1], data.mov[2] - 3.0f)); 
 
-		// view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
-		// int movLocation = glGetUniformLocation(shader.getId(), "mov");
-		// glUniform3f(movLocation, data.mov[0], data.mov[1], data.mov[2]);
 		int modelLocation = glGetUniformLocation(shader.getId(), "model");
 		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &model[0][0]);
 		int viewLocation = glGetUniformLocation(shader.getId(), "view");
@@ -262,16 +181,14 @@ int main()
 		// update the uniform color
 		int vertexColorLocation = glGetUniformLocation(shader.getId(), "ourColor");
 		glBindVertexArray(VAO);
-		glUniform4f(vertexColorLocation, 0.0f, 0.0f, 0.0f, 1.0f);
-		for (std::vector<t_face>::iterator it = data.v_faces.begin(); it != data.v_faces.end(); it++)
-			glDrawElements(GL_TRIANGLE_FAN, (*it).size, GL_UNSIGNED_INT, (void *)((*it).offset * sizeof(GLuint)));
-		glUniform4f(vertexColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
-		for (std::vector<t_face>::iterator it = data.v_faces.begin(); it != data.v_faces.end(); it++)
-			glDrawElements(GL_LINE_LOOP, (*it).size, GL_UNSIGNED_INT, (void *)((*it).offset * sizeof(GLuint)));
+		for (size_t i = 0; i < data.v_faces.size(); i++) {
+			col = (float)(i%step) / step;
+			glUniform4f(vertexColorLocation, col, col, col, 1.0f);
+			glDrawElements(GL_TRIANGLE_FAN, data.v_faces[i].size, GL_UNSIGNED_INT, (void *)(data.v_faces[i].offset * sizeof(GLuint)));
+		}
 		glBindVertexArray(0);
 		// END
 		glfwPollEvents();
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(GLFW.getWindow());
 	}
-	terminate();
 }
