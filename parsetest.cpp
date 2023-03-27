@@ -1,7 +1,7 @@
 #include "test.hpp"
 // c++ parsetest.cpp parse.cpp libglfw3.a -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1
 const GLint WIDTH = 800, HEIGHT = 600;
-const float SPEED = 0.02;
+const float MOV_SPEED = 0.02;
 void parse(char *filename, t_data *data);
 
 void init(t_data *data)
@@ -10,12 +10,6 @@ void init(t_data *data)
 	data->mov[0] = 0;
 	data->mov[1] = 0;
 	data->mov[2] = 0;
-	data->minX = 2e30;
-	data->minY = 2e30;
-	data->minZ = 2e30;
-	data->maxX = -2e30;
-	data->maxY = -2e30;
-	data->maxZ = -2e30;
 }
 
 glm::mat4 rotObj(glm::mat4 mat, float angle, int mode)
@@ -53,22 +47,22 @@ void processInput(GLFWwindow *window, t_data *data)
 		data->rot = rotObj(data->rot, -2.0, 2);
 	key = glfwGetKey(window, GLFW_KEY_W);
 	if (key == GLFW_PRESS)
-		data->mov[1] -= SPEED;
+		data->mov[1] -= MOV_SPEED;
 	key = glfwGetKey(window, GLFW_KEY_S);
 	if (key == GLFW_PRESS)
-		data->mov[1] += SPEED;
+		data->mov[1] += MOV_SPEED;
 	key = glfwGetKey(window, GLFW_KEY_A);
 	if (key == GLFW_PRESS)
-		data->mov[0] += SPEED;
+		data->mov[0] += MOV_SPEED;
 	key = glfwGetKey(window, GLFW_KEY_D);
 	if (key == GLFW_PRESS)
-		data->mov[0] -= SPEED;
+		data->mov[0] -= MOV_SPEED;
 	key = glfwGetKey(window, GLFW_KEY_I);
 	if (key == GLFW_PRESS)
-		data->mov[2] += SPEED;
+		data->mov[2] += MOV_SPEED;
 	key = glfwGetKey(window, GLFW_KEY_O);
 	if (key == GLFW_PRESS)
-		data->mov[2] -= SPEED;
+		data->mov[2] -= MOV_SPEED;
 }
 
 void normalize_delete_this(std::vector<float> *vertices)
@@ -80,53 +74,29 @@ void normalize_delete_this(std::vector<float> *vertices)
 		*it *= factor;
 }
 
-void another_temp(t_data *data)
+void center_obj(t_data *data)
 {
-	float temp;
-	temp = data->maxX - data->minX;
-	temp = temp < 0 ? -temp : temp;
-	data->mov[0] = temp / 2 - data->maxX;
-	temp = data->maxY - data->minY;
-	temp = temp < 0 ? -temp : temp;
-	data->mov[1] = temp / 2 - data->maxY;
-	temp = data->maxZ - data->minZ;
-	temp = temp < 0 ? -temp : temp;
-	data->mov[2] = temp / 2 - data->maxZ;
-	std::cout << data->maxX << " " << data->maxY << " " << data->maxZ << std::endl;
-	std::cout << data->minX << " " << data->minY << " " << data->minZ << std::endl;
-	std::cout << data->mov[0] << " " << data->mov[1] << " " << data->mov[2] << std::endl;
-	for (std::vector<float>::iterator it = data->v_vertices.begin(); it != data->v_vertices.end(); it += 3)
+	float center[3];
+	int size = data->v_vertices.size();
+	for (int i = 0; i < 3; i++)
+		center[i] = 0;
+	for (int i = 0; i < size; i += 3)
 	{
-		*it += data->mov[0];
-		*(it + 1) += data->mov[1];
-		*(it + 2) += data->mov[2];
+		center[0] += data->v_vertices[i];
+		center[1] += data->v_vertices[i + 1];
+		center[2] += data->v_vertices[i + 2];
 	}
-	data->mov[0] = 0;
-	data->mov[1] = 0;
-	data->mov[2] = 0;
+	center[0] /= size / 3;
+	center[1] /= size / 3;
+	center[2] /= size / 3;
+	for (int i = 0; i < size; i += 3)
+	{
+		data->v_vertices[i] -= center[0];
+		data->v_vertices[i + 1] -= center[1];
+		data->v_vertices[i + 2] -= center[2];
+	}
 }
 
-glm::mat4 rotation_mat(float rot[3])
-{
-	// float rotx = glm::radians(rot[0]);
-	// float roty = glm::radians(rot[1]);
-	// float rotz = glm::radians(rot[2]);
-	// glm::mat4 rotmat = glm::mat4(1.0f);
-	// rotmat[0][0] = cos(roty) * cos(rotz);
-	// rotmat[0][1] = sin(rotx) * sin(roty) * cos(rotz) - cos(rotx) * sin(rotz);
-	// rotmat[0][2] = cos(rotx) * sin(roty) * cos(rotz) + sin(rotx) * sin(rotz);
-
-	// rotmat[1][0] = cos(roty) * sin(rotz);
-	// rotmat[1][1] = sin(rotx) * sin(roty) * sin(rotz) + cos(rotx) * cos(rotz);
-	// rotmat[1][2] = cos(rotx) * sin(roty) * sin(rotz) - sin(rotx) * cos(rotz);
-
-	// rotmat[2][0] = -sin(roty);
-	// rotmat[2][1] = sin(rotx) * cos(roty);
-	// rotmat[2][2] = cos(rotx) * cos(roty);
-	glm::quat rotationQuat = glm::quat(glm::vec3(glm::radians(rot[0]), glm::radians(rot[1]), glm::radians(rot[2])));
-	glm::mat4 rotmat = glm::mat4_cast(rotationQuat);
-	return rotmat;
-}
 
 int main()
 {
@@ -134,9 +104,9 @@ int main()
 	std::string path("./resources/teapot.obj");
 	init(&data);
 	parse(path, &data);
-	another_temp(&data);
+	center_obj(&data);
 	normalize_delete_this(&(data.v_vertices));
-	GLFW GLFW(WIDTH, HEIGHT, SPEED);
+	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
 
 	// TEMP BLOCK START
