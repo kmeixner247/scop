@@ -23,7 +23,7 @@ typedef struct s_data
 	std::vector<float> v_vertices;
 	std::vector<int> v_indices;
 	std::vector<t_face> v_faces;
-	float rot[3];
+	glm::mat4 rot;
 	float mov[3];
 	float lol;
 	float minX;

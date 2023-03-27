@@ -6,9 +6,7 @@ void parse(char *filename, t_data *data);
 
 void init(t_data *data)
 {
-	data->rot[0] = 0;
-	data->rot[1] = 0;
-	data->rot[2] = 0;
+	data->rot = glm::mat4(1.0f);
 	data->mov[0] = 0;
 	data->mov[1] = 0;
 	data->mov[2] = 0;
@@ -20,6 +18,15 @@ void init(t_data *data)
 	data->maxZ = -2e30;
 }
 
+glm::mat4 rotObj(glm::mat4 mat, float angle, int mode)
+{
+    // mode 0 for X, 1 for Y, 2 for Z
+    glm::vec3 axis;
+    axis[mode] = 1.0f;
+    mat = glm::rotate(mat, glm::radians(angle), axis);
+    return mat;
+}
+
 void processInput(GLFWwindow *window, t_data *data)
 {
 	int key;
@@ -27,65 +34,41 @@ void processInput(GLFWwindow *window, t_data *data)
 	if (key == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	key = glfwGetKey(window, GLFW_KEY_UP);
-	if (key == GLFW_PRESS) {
-		data->rot[0] -= 2;
-		if (data->rot[0] < 0)
-			data->rot[0] += 360;
-	}
+	if (key == GLFW_PRESS)
+		data->rot = rotObj(data->rot, -2.0, 0);
 	key = glfwGetKey(window, GLFW_KEY_DOWN);
-	if (key == GLFW_PRESS) {
-		data->rot[0] += 2;
-		if (data->rot[0] > 360)
-			data->rot[0] -= 360;
-	}
+	if (key == GLFW_PRESS)
+		data->rot = rotObj(data->rot, 2.0, 0);
 	key = glfwGetKey(window, GLFW_KEY_LEFT);
-	if (key == GLFW_PRESS) {
-		data->rot[1] += 2;
-		if (data->rot[1] > 360)
-			data->rot[1] -= 360;
-	}
+	if (key == GLFW_PRESS)
+		data->rot = rotObj(data->rot, 2.0, 1);
 	key = glfwGetKey(window, GLFW_KEY_RIGHT);
-	if (key == GLFW_PRESS) {
-		data->rot[1] -= 2;
-		if (data->rot[1] < 0)
-			data->rot[1] += 360;
-	}
+	if (key == GLFW_PRESS)
+		data->rot = rotObj(data->rot, -2.0, 1);
 	key = glfwGetKey(window, GLFW_KEY_R);
-	if (key == GLFW_PRESS) {
-		data->rot[2] += 2;
-		if (data->rot[2] > 360)
-			data->rot[2] -= 360;
-	}
+	if (key == GLFW_PRESS)
+		data->rot = rotObj(data->rot, 2.0, 2);
 	key = glfwGetKey(window, GLFW_KEY_T);
-	if (key == GLFW_PRESS) {
-		data->rot[2] -= 2;
-		if (data->rot[2] < 0)
-			data->rot[2] += 360;
-	}
+	if (key == GLFW_PRESS)
+		data->rot = rotObj(data->rot, -2.0, 2);
 	key = glfwGetKey(window, GLFW_KEY_W);
-	if (key == GLFW_PRESS) {
+	if (key == GLFW_PRESS)
 		data->mov[1] -= SPEED;
-	}
 	key = glfwGetKey(window, GLFW_KEY_S);
-	if (key == GLFW_PRESS) {
+	if (key == GLFW_PRESS)
 		data->mov[1] += SPEED;
-	}
 	key = glfwGetKey(window, GLFW_KEY_A);
-	if (key == GLFW_PRESS) {
+	if (key == GLFW_PRESS)
 		data->mov[0] += SPEED;
-	}
 	key = glfwGetKey(window, GLFW_KEY_D);
-	if (key == GLFW_PRESS) {
+	if (key == GLFW_PRESS)
 		data->mov[0] -= SPEED;
-	}
 	key = glfwGetKey(window, GLFW_KEY_I);
-	if (key == GLFW_PRESS) {
+	if (key == GLFW_PRESS)
 		data->mov[2] += SPEED;
-	}
 	key = glfwGetKey(window, GLFW_KEY_O);
-	if (key == GLFW_PRESS) {
+	if (key == GLFW_PRESS)
 		data->mov[2] -= SPEED;
-	}
 }
 
 void normalize_delete_this(std::vector<float> *vertices)
@@ -97,28 +80,52 @@ void normalize_delete_this(std::vector<float> *vertices)
 		*it *= factor;
 }
 
-void another_temp(t_data *data) {
+void another_temp(t_data *data)
+{
 	float temp;
 	temp = data->maxX - data->minX;
 	temp = temp < 0 ? -temp : temp;
-	data->mov[0] = temp/2 - data->maxX;
+	data->mov[0] = temp / 2 - data->maxX;
 	temp = data->maxY - data->minY;
 	temp = temp < 0 ? -temp : temp;
-	data->mov[1] = temp/2 - data->maxY;
+	data->mov[1] = temp / 2 - data->maxY;
 	temp = data->maxZ - data->minZ;
 	temp = temp < 0 ? -temp : temp;
-	data->mov[2] = temp/2 - data->maxZ;
+	data->mov[2] = temp / 2 - data->maxZ;
 	std::cout << data->maxX << " " << data->maxY << " " << data->maxZ << std::endl;
 	std::cout << data->minX << " " << data->minY << " " << data->minZ << std::endl;
 	std::cout << data->mov[0] << " " << data->mov[1] << " " << data->mov[2] << std::endl;
-	for (std::vector<float>::iterator it = data->v_vertices.begin(); it != data->v_vertices.end(); it += 3) {
+	for (std::vector<float>::iterator it = data->v_vertices.begin(); it != data->v_vertices.end(); it += 3)
+	{
 		*it += data->mov[0];
-		*(it+1) += data->mov[1];
-		*(it+2) += data->mov[2];
+		*(it + 1) += data->mov[1];
+		*(it + 2) += data->mov[2];
 	}
 	data->mov[0] = 0;
 	data->mov[1] = 0;
 	data->mov[2] = 0;
+}
+
+glm::mat4 rotation_mat(float rot[3])
+{
+	// float rotx = glm::radians(rot[0]);
+	// float roty = glm::radians(rot[1]);
+	// float rotz = glm::radians(rot[2]);
+	// glm::mat4 rotmat = glm::mat4(1.0f);
+	// rotmat[0][0] = cos(roty) * cos(rotz);
+	// rotmat[0][1] = sin(rotx) * sin(roty) * cos(rotz) - cos(rotx) * sin(rotz);
+	// rotmat[0][2] = cos(rotx) * sin(roty) * cos(rotz) + sin(rotx) * sin(rotz);
+
+	// rotmat[1][0] = cos(roty) * sin(rotz);
+	// rotmat[1][1] = sin(rotx) * sin(roty) * sin(rotz) + cos(rotx) * cos(rotz);
+	// rotmat[1][2] = cos(rotx) * sin(roty) * sin(rotz) - sin(rotx) * cos(rotz);
+
+	// rotmat[2][0] = -sin(roty);
+	// rotmat[2][1] = sin(rotx) * cos(roty);
+	// rotmat[2][2] = cos(rotx) * cos(roty);
+	glm::quat rotationQuat = glm::quat(glm::vec3(glm::radians(rot[0]), glm::radians(rot[1]), glm::radians(rot[2])));
+	glm::mat4 rotmat = glm::mat4_cast(rotationQuat);
+	return rotmat;
 }
 
 int main()
@@ -148,14 +155,13 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.v_indices.size() * sizeof(int), &(data.v_indices[0]), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
-	glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)WIDTH/(float)HEIGHT, 0.1f, 100.0f);
+	glm::mat4 view;
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 	float col;
 	int step = 2;
 	glEnable(GL_DEPTH_TEST);
 	// TEMP BLOCK END
+	glm::vec3 temp;
 	while (!GLFW.shouldClose())
 	{
 		// GLFW.processInput(&data);
@@ -164,16 +170,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Render
 		shader.use();
-
-		model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(data.rot[0]), glm::vec3(1.0f, 0.0f, 0.0f)); 
-		model = glm::rotate(model, glm::radians(data.rot[1]), glm::vec3(0.0f, 1.0f, 0.0f)); 
-		model = glm::rotate(model, glm::radians(data.rot[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 		view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(data.mov[0], data.mov[1], data.mov[2] - 3.0f)); 
+		view = glm::translate(view, glm::vec3(data.mov[0], data.mov[1], data.mov[2] - 2.0f));
 
 		int modelLocation = glGetUniformLocation(shader.getId(), "model");
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &model[0][0]);
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &data.rot[0][0]);
 		int viewLocation = glGetUniformLocation(shader.getId(), "view");
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 		int projLocation = glGetUniformLocation(shader.getId(), "proj");
@@ -181,8 +182,9 @@ int main()
 		// update the uniform color
 		int vertexColorLocation = glGetUniformLocation(shader.getId(), "ourColor");
 		glBindVertexArray(VAO);
-		for (size_t i = 0; i < data.v_faces.size(); i++) {
-			col = (float)(i%step) / step;
+		for (size_t i = 0; i < data.v_faces.size(); i++)
+		{
+			col = (float)(i % step) / step;
 			glUniform4f(vertexColorLocation, col, col, col, 1.0f);
 			glDrawElements(GL_TRIANGLE_FAN, data.v_faces[i].size, GL_UNSIGNED_INT, (void *)(data.v_faces[i].offset * sizeof(GLuint)));
 		}
