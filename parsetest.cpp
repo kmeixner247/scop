@@ -10,6 +10,7 @@ void init(t_data *data)
 	data->mov[0] = 0;
 	data->mov[1] = 0;
 	data->mov[2] = 0;
+	data->shouldClose = 0;
 }
 
 glm::mat4 rotObj(glm::mat4 mat, float angle, int mode)
@@ -65,7 +66,7 @@ void processInput(GLFWwindow *window, t_data *data)
 		data->mov[2] -= MOV_SPEED;
 }
 
-void normalize_delete_this(std::vector<float> *vertices)
+void scaleObj(std::vector<float> *vertices)
 {
 	float max = *(std::max_element(vertices->begin(), vertices->end()));
 	float min = *(std::min_element(vertices->begin(), vertices->end()));
@@ -74,7 +75,7 @@ void normalize_delete_this(std::vector<float> *vertices)
 		*it *= factor;
 }
 
-void center_obj(t_data *data)
+void centerObj(t_data *data)
 {
 	float center[3];
 	int size = data->v_vertices.size();
@@ -104,8 +105,8 @@ int main()
 	std::string path("./resources/teapot.obj");
 	init(&data);
 	parse(path, &data);
-	center_obj(&data);
-	normalize_delete_this(&(data.v_vertices));
+	centerObj(&data);
+	scaleObj(&(data.v_vertices));
 	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
 

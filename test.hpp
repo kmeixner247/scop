@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 #include <math.h>
 #include "Shader.hpp"
 #include "GLFW.hpp"
@@ -24,8 +25,8 @@ typedef struct s_data
 	std::vector<int> v_indices;
 	std::vector<t_face> v_faces;
 	glm::mat4 rot;
+	bool shouldClose;
 	float mov[3];
-	float lol;
 	float minX;
 	float minY;
 	float minZ;

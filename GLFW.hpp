@@ -3,13 +3,13 @@
 #include "test.hpp"
 class GLFW {
 private:
+	typedef void (*keyFunction)();
 	const GLint _WIDTH;
 	const GLint _HEIGHT;
 	const GLint _SPEED;
 	GLFWwindow *_window;
-	unsigned int _VBO;
-	unsigned int _EBO;
-	unsigned int _VAO;
+	std::map<int, keyFunction> _keyFunctions;
+	void keyESC();
 public:
 	GLFW(GLint WIDTH, GLint HEIGHT, GLint SPEED);
 	~GLFW();
