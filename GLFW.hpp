@@ -1,20 +1,37 @@
 #ifndef GLFW_HPP
 #define GLFW_HPP
-#include "test.hpp"
+#include "scop.hpp"
 class GLFW {
 private:
-	typedef void (*keyFunction)();
+	typedef void (GLFW::*keyFunction)();
 	const GLint _WIDTH;
 	const GLint _HEIGHT;
-	const GLint _SPEED;
+	const GLfloat _SPEED;
 	GLFWwindow *_window;
-	std::map<int, keyFunction> _keyFunctions;
-	void keyESC();
+	glm::mat4 _rot;
+	float _mov[3];
+	std::map<int, keyFunction> _keyMap;
+	void keyESC() { glfwSetWindowShouldClose(this->_window, true); }
+	void keyUP() { this->rotate(-2.0, 0); }
+	void keyDOWN() { this->rotate(2.0, 0); }
+	void keyLEFT() { this->rotate(2.0, 1); }
+	void keyRIGHT() { this->rotate(-2.0, 1); }
+	void keyR() { this->rotate(2.0, 2); }
+	void keyT() { this->rotate(-2.0, 2); }
+	void keyD() { this->_mov[0] -= this->_SPEED; }
+	void keyA(){ this->_mov[0] += this->_SPEED; }
+	void keyW() { this->_mov[1] -= this->_SPEED; }
+	void keyS() { this->_mov[1] += this->_SPEED; }
+	void keyO() { this->_mov[2] -= this->_SPEED; }
+	void keyI() { this->_mov[2] += this->_SPEED; }
+	void rotate(float angle, int mode);
 public:
-	GLFW(GLint WIDTH, GLint HEIGHT, GLint SPEED);
-	~GLFW();
-	GLFWwindow *getWindow();
-	GLboolean shouldClose();
-	// void processInput(t_data *data);
+	GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED);
+	~GLFW() { glfwTerminate(); }
+	GLFWwindow *getWindow() { return this->_window; }
+	const GLfloat *getRot() { return &(this->_rot[0][0]); }
+	float getMov(int ind) { /*std::cout << this->_SPEED << std::endl;*/ return this->_mov[ind]; }
+	GLboolean shouldClose() { return glfwWindowShouldClose(this->_window); }
+	void processInput();
 };
 #endif
