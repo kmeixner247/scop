@@ -30,7 +30,7 @@ public:
 	~GLFW() { glfwTerminate(); }
 	GLFWwindow *getWindow() { return this->_window; }
 	const GLfloat *getRot() { return &(this->_rot[0][0]); }
-	float getMov(int ind) { /*std::cout << this->_SPEED << std::endl;*/ return this->_mov[ind]; }
+	float getMov(int ind) { return this->_mov[ind]; }
 	GLboolean shouldClose() { return glfwWindowShouldClose(this->_window); }
 	void processInput();
 };
