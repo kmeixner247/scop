@@ -19,7 +19,7 @@ private:
 	void keyR() { this->rotate(2.0, 2); }
 	void keyT() { this->rotate(-2.0, 2); }
 	void keyD() { this->_mov[0] -= this->_SPEED; }
-	void keyA(){ this->_mov[0] += this->_SPEED; }
+	void keyA() { this->_mov[0] += this->_SPEED; }
 	void keyW() { this->_mov[1] -= this->_SPEED; }
 	void keyS() { this->_mov[1] += this->_SPEED; }
 	void keyO() { this->_mov[2] -= this->_SPEED; }
