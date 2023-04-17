@@ -40,7 +40,7 @@ void centerObj(t_data *data)
 int main()
 {
 	t_data data;
-	std::string path("./resources/cat.obj");
+	std::string path("resources/cat.obj");
 	parse(path, &data);
 	centerObj(&data);
 	scaleObj(&(data.v_vertices));
@@ -67,7 +67,6 @@ int main()
 	int step = 2;
 	glEnable(GL_DEPTH_TEST);
 	// TEMP BLOCK END
-	glm::vec3 temp;
 	while (!GLFW.shouldClose())
 	{
 		GLFW.processInput();

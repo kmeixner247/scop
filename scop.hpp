@@ -13,6 +13,7 @@
 #include <math.h>
 #include "Shader.hpp"
 #include "GLFW.hpp"
+#include "math.hpp"
 typedef struct s_face
 {
 	int offset;
