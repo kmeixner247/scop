@@ -6,7 +6,7 @@ LIBS = libglfw3.a
 
 CC = c++
 
-CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1# -g -fsanitize=address
+CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1 -g -fsanitize=address
 
 all: $(NAME)
 

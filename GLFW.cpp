@@ -7,7 +7,7 @@ GLFW::GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED) : _WIDTH(WIDTH), _HEIGHT(HE
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	this->_window = glfwCreateWindow(this->_WIDTH, this->_HEIGHT, "scop, now new with classes!", NULL, NULL);
+	this->_window = glfwCreateWindow(this->_WIDTH, this->_HEIGHT, "cursed textures achieved yo", NULL, NULL);
 	int screenWidth, screenHeight;
 	glfwGetFramebufferSize(this->_window, &screenWidth, &screenHeight);
 	if (!this->_window) {
@@ -17,7 +17,7 @@ GLFW::GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED) : _WIDTH(WIDTH), _HEIGHT(HE
 	}
 	glfwMakeContextCurrent(this->_window);
 	glViewport(0, 0, screenWidth, screenHeight);
-	this->_rot = glm::mat4(1.0f);
+	this->_rot = ft::mat4(1.0f);
 	// initializing key map
 	_keyMap[GLFW_KEY_ESCAPE] = &GLFW::keyESC;
 	_keyMap[GLFW_KEY_UP] = &GLFW::keyUP;
@@ -40,9 +40,9 @@ GLFW::GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED) : _WIDTH(WIDTH), _HEIGHT(HE
 void GLFW::rotate(float angle, int mode)
 {
     // mode 0 for X, 1 for Y, 2 for Z
-    glm::vec3 axis;
+    ft::vec3 axis;
     axis[mode] = 1.0f;
-    this->_rot = glm::rotate(this->_rot, glm::radians(angle), axis);
+    this->_rot = ft::rotate(this->_rot, ft::radians(angle), axis);
 }
 
 void GLFW::processInput() {

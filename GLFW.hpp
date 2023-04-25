@@ -8,7 +8,7 @@ private:
 	const GLint _HEIGHT;
 	const GLfloat _SPEED;
 	GLFWwindow *_window;
-	glm::mat4 _rot;
+	ft::mat4 _rot;
 	float _mov[3];
 	std::map<int, keyFunction> _keyMap;
 	void keyESC() { glfwSetWindowShouldClose(this->_window, true); }

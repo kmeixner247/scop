@@ -4,6 +4,7 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "vec2.hpp"
 #include "vec3.hpp"
 #include "vec4.hpp"
 #include "mat4.hpp"
@@ -13,11 +14,15 @@ namespace ft {
 		float len = v.length();
 		if (len > 1e-6)
 			return v / len;
+		else
+			throw std::runtime_error("Division by zero");
 	}
 	inline vec4 normalize(const vec4 &v) {
 		float len = v.length();
 		if (len > 1e-6)
 			return v / len;
+		else
+			throw std::runtime_error("Division by zero");
 	}
 
 	inline float radians(const float &deg) {
@@ -66,6 +71,16 @@ namespace ft {
 		result[3] = m[3];
 		return result;
 	}
+
+	inline vec3 crossproduct(const vec3 &v1, const vec3 &v2) {
+		vec3 temp;
+		temp.x = v1.y*v2.z - v1.z*v2.y;
+		temp.y = v1.z*v2.x - v1.x*v2.z;
+		temp.z = v1.x*v2.y - v1.y*v2.x;
+		return temp;
+	}
 }
+
+
 
 #endif
