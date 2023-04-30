@@ -11,7 +11,7 @@ CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRE
 all: $(NAME)
 
 $(NAME): $(SRCS)
-		$(CC) -o $(NAME) $(SRCS) $(LIBS) $(CFLAGS) 
+		$(CC) -o $(NAME) $(SRCS) $(LIBS) $(CFLAGS)
 
 clean:
 	@$(RM) $(NAME)

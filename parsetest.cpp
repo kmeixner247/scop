@@ -28,7 +28,7 @@ void centerObj(t_data *data)
 	ft::vec3 center;
 	int size = data->vbo.size();
 	for (int i = 0; i < 3; i++)
-		center[i] = 0;
+		center[i] = 0;	
 	for (int i = 0; i < size; i ++)
 		center += data->vbo[i].vertex;
 	center /= size;
@@ -41,7 +41,7 @@ void sphericalmap(t_data *data) {
 	for (std::vector<t_vbo_element>::iterator it = data->vbo.begin(); it != data->vbo.end(); it++) {
 		v.x = atan2((*it).vertex.x, (*it).vertex.z) / (2 * M_PI) + 0.5;
 		v.y = asin((*it).vertex.y) / M_PI + 0.5;
-		v *= 10;
+		v *= 1;
 		(*it).texcoords = v;
 	}
 }
@@ -109,7 +109,7 @@ int main()
 {
 	t_data data;
 	std::string path("resources/cat.obj");
-	parse(path, &data);
+	parse(path, data);
 	centerObj(&data);
 	scaleObj(&(data.vbo));
 	// calc_normals(&data);
@@ -133,8 +133,10 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.v_indices.size() * sizeof(int), &(data.v_indices[0]), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	ft::mat4 view;
 	ft::mat4 proj = ft::perspective(ft::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 	float col;
@@ -151,6 +153,9 @@ int main()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(tdata);
 	// TEXTURE BLOCK END
+	data.ambient = ft::vec3(0.4f, 0.4f, 0.4f);
+	data.diffuse = ft::vec3(0.64f ,0.64f, 0.64f);
+	data.specular = ft::vec3(0.0f ,0.0f, 0.0f);
 	while (!GLFW.shouldClose())
 	{
 		GLFW.processInput();
@@ -161,19 +166,28 @@ int main()
 		view = ft::mat4(1.0f);
 		view = ft::translate(view, ft::vec3(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 2.0f));
 
+		int lightPosLocation = glGetUniformLocation(shader.getId(), "lightPos");
+		glUniform3f(lightPosLocation, 1.0f, 0, 0);
+		int viewPosLocation = glGetUniformLocation(shader.getId(), "viewPos");
+		glUniform3f(viewPosLocation, 0.0f, 0.0f, -3.0f);
+		int ambientLocation = glGetUniformLocation(shader.getId(), "ambientColor");
+		glUniform3f(ambientLocation, data.ambient.x, data.ambient.y, data.ambient.z);
+		int diffuseLocation = glGetUniformLocation(shader.getId(), "diffuseColor");
+		glUniform3f(diffuseLocation, data.diffuse.x, data.diffuse.y, data.diffuse.z);
+		int specularLocation = glGetUniformLocation(shader.getId(), "specularColor");
+		glUniform3f(specularLocation, data.specular.x, data.specular.y, data.specular.z);
 		int modelLocation = glGetUniformLocation(shader.getId(), "model");
 		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, GLFW.getRot());
 		int viewLocation = glGetUniformLocation(shader.getId(), "view");
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 		int projLocation = glGetUniformLocation(shader.getId(), "proj");
 		glUniformMatrix4fv(projLocation, 1, GL_FALSE, &proj[0][0]);
-		// update the uniform color
-		int vertexColorLocation = glGetUniformLocation(shader.getId(), "ourColor");
+
 		glBindVertexArray(VAO);
 		for (size_t i = 0; i < data.v_faces.size(); i++)
 		{
-			col = (float)(i % step) / step;
-			glUniform4f(vertexColorLocation, col, col, col, 1.0f);
+			// col = (float)(i % step) / step;
+			// glUniform4f(vertexColorLocation, col, col, col, 1.0f);
 			glBindTexture(GL_TEXTURE_2D, texture);
 			glDrawElements(GL_TRIANGLE_FAN, data.v_faces[i].size, GL_UNSIGNED_INT, (void *)(data.v_faces[i].offset * sizeof(GLuint)));
 		}
