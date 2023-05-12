@@ -118,10 +118,13 @@ void parse(const std::string &filename, t_data &data) {
 			e.vertex = data.v_vertices[v_index];
 			if (elements.size() > 1) {
 				t_index = std::stoi(elements[1]) - 1;
-				e.texcoords = data.v_texcoords[t_index];
+				if (data.v_texcoords.size() > 0)
+					e.texcoords = data.v_texcoords[t_index];
+				else
+					e.texcoords = ft::vec2(0.0f);
 			}
-			if (elements.size() > 2) {
-				n_index = std::stoi(elements[2]) - 1;
+			if (elements.size() > 1) {
+				n_index = std::stoi(elements[1]) - 1;
 				e.normal = data.v_normals[n_index];
 			}
 			data.v_indices.push_back(lol++);

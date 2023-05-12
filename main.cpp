@@ -108,13 +108,13 @@ void cubemap(t_data *data) {
 int main()
 {
 	t_data data;
-	std::string path("resources/cat.obj");
+	std::string path("resources/skull2.obj");
 	parse(path, data);
 	centerObj(&data);
 	scaleObj(&(data.vbo));
 	// calc_normals(&data);
 	// cubemap(&data);
-	sphericalmap(&data);
+	// sphericalmap(&data);
 	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
 
@@ -153,9 +153,12 @@ int main()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(tdata);
 	// TEXTURE BLOCK END
+	// data.ambient = ft::vec3(0.0f, 0.0f, 0.0f);
 	data.ambient = ft::vec3(0.4f, 0.4f, 0.4f);
-	data.diffuse = ft::vec3(0.64f ,0.64f, 0.64f);
-	data.specular = ft::vec3(0.0f ,0.0f, 0.0f);
+	// data.diffuse = ft::vec3(0.0f ,0.0f, 0.0f);
+	data.diffuse = ft::vec3(0.4f ,0.0f, 0.0f);
+	// data.specular = ft::vec3(0.0f ,0.0f, 0.0f);
+	data.specular = ft::vec3(0.3f ,0.3f, 0.3f);
 	while (!GLFW.shouldClose())
 	{
 		GLFW.processInput();
@@ -164,12 +167,14 @@ int main()
 		// Render
 		shader.use();
 		view = ft::mat4(1.0f);
-		view = ft::translate(view, ft::vec3(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 2.0f));
-
+		ft::vec3 asdf(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 2.0f);
+		// view = ft::translate(view, ft::vec3(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 2.0f));
+		view = ft::translate(view, asdf);
 		int lightPosLocation = glGetUniformLocation(shader.getId(), "lightPos");
-		glUniform3f(lightPosLocation, 1.0f, 0, 0);
+		glUniform3f(lightPosLocation, 1.0f, 0, 0.5f);
 		int viewPosLocation = glGetUniformLocation(shader.getId(), "viewPos");
-		glUniform3f(viewPosLocation, 0.0f, 0.0f, -3.0f);
+		// glUniform3f(viewPosLocation, 0.0f, 0.0f, -2.0f);
+		glUniform3f(viewPosLocation, asdf.x, asdf.y, asdf.z);
 		int ambientLocation = glGetUniformLocation(shader.getId(), "ambientColor");
 		glUniform3f(ambientLocation, data.ambient.x, data.ambient.y, data.ambient.z);
 		int diffuseLocation = glGetUniformLocation(shader.getId(), "diffuseColor");
