@@ -30,3 +30,4 @@ You can rotate the object around all 3 of its axes using the arrow keys, 'R' and
 You can zoom in and out with the keys 'I' and 'O'.
 You can move the camera up down, left and right with the 'W' 'A' 'S' 'D' keys.
 
+<img width="400" alt="skull" src="https://github.com/kmeixner247/scop/assets/81682578/a5a7dcbb-16ef-4d74-9ef5-5599d6057bba">
