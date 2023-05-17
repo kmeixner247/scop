@@ -2,7 +2,7 @@
 The goal of this project is to interpret a wavefront .obj file and display the object using modern OpenGL.
 
 ## NOTE
-This project is still under development. It is being written on MacOS. Testing / compatibility for other systems has not yet been done.
+This project is still under development. It is being written on macOS. Testing / compatibility for other systems has not yet been done.
 
 ## To Do
 - Parse .bmp files without stb_image
