@@ -15,6 +15,7 @@ This project is still under development. It is being written on MacOS. Testing /
   - file browser
   - sliders
   - test linux compatibility
+- Features section in README.md
 
 ## Setup
 Clone the repository onto your system and run `make`. 
