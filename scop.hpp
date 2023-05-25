@@ -43,4 +43,5 @@ typedef struct s_data
 } t_data;
 
 void parse(const std::string &filename, t_data &data);
+bool start
 #endif

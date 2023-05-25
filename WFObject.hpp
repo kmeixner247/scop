@@ -10,11 +10,11 @@ private:
     std::vector<ft::vec3> _v_texcoords;
     std::vector<ft::vec3> _v_normals;
     std::vector<int> _v_indices;
-    ft::vec3 _ambient_color;
-    ft::vec3 _diffuse_color;
-    ft::vec3 _specular_color;
+    ft::vec3 _ambientColor;
+    ft::vec3 _diffuseColor;
+    ft::vec3 _specularColor;
     WFObject();
-    void trim_whitespace_after(std::string &s);
+    void TrimWhitespaceAfter(std::string &s);
 public:
     WFObject(std::string const &path);
 };
