@@ -1,16 +1,16 @@
-#ifndef SCOP_HPP
-#define SCOP_HPP
+#pragma once
+
 #include <OpenGL/gl3.h>
-#include "include/glfw3.h"
+#include "../external/glfw3.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
 #include <math.h>
-#include "Shader.hpp"
-#include "math.hpp"
-#include "GLFW.hpp"
+#include "objects/Shader.hpp"
+#include "math/math.hpp"
+#include "objects/GLFW.hpp"
 
 typedef struct s_face
 {
@@ -43,5 +43,3 @@ typedef struct s_data
 } t_data;
 
 void parse(const std::string &filename, t_data &data);
-bool start
-#endif

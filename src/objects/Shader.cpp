@@ -1,4 +1,4 @@
-#include "Shader.hpp"
+#include "../../include/objects/Shader.hpp"
 
 Shader::Shader() : _id(0){}
 

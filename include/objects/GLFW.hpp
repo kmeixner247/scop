@@ -1,6 +1,6 @@
-#ifndef GLFW_HPP
-#define GLFW_HPP
-#include "scop.hpp"
+#pragma once
+
+#include "../scop.hpp"
 class GLFW {
 private:
 	typedef void (GLFW::*keyFunction)();
@@ -34,4 +34,3 @@ public:
 	GLboolean shouldClose() { return glfwWindowShouldClose(this->_window); }
 	void processInput();
 };
-#endif

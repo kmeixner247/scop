@@ -1,4 +1,4 @@
-#include "GLFW.hpp"
+#include "../../include/objects/GLFW.hpp"
 
 GLFW::GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED) : _WIDTH(WIDTH), _HEIGHT(HEIGHT), _SPEED(SPEED) {
 	glfwInit();

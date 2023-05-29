@@ -1,21 +1,31 @@
-#include "../Material.hpp"
-#include <fstream>
+#include "Material.hpp"
+#include<iostream>
+#include<fstream>
+#include<sstream>
+#include<string>
+
+std::vector<Material> parseMaterials(std::string const &src) {
+    std::stringstream ss;
+    std::ifstream file (src);
+    std::string line;
+    std::vector<Material> mats;
+    while (file && line.rfind("newmtl")) {
+        getline(file, line);
+    }
+    while (file) {
+        ss.str(std::string());
+        do {
+            ss << line << std::endl;
+            getline(file, line);      
+        } while (file && line.rfind("newmtl"));
+        Material mat(ss.str());
+        mats.push_back(mat);
+    }
+    return mats;
+}
+
+
 
 int main() {
-    std::ifstream file("test.mtl");
-    // std::string fileContents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    std::string line;
-    std::string_view lineView;
-    while (std::getline(file, line)) {
-        lineView = line;
-        auto commentPos = lineView.find('#');
-        if (commentPos != lineView.npos)
-            lineView.remove_suffix(lineView.size() - commentPos);
-        auto endPos = lineView.find_last_not_of(" \t\n\v\f\r");
-        if (endPos <= lineView.size())
-            lineView.remove_suffix(lineView.size() - endPos);
-        if (lineView.starts_with("newmtl"))
-            std::cout << lineView << std::endl;
-
-    }
+    std::vector<Material> mats = parseMaterials("test2.mtl");
 }

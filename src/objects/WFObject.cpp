@@ -1,4 +1,4 @@
-#include "WFObject.hpp"
+#include "../../include/objects/WFObject.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
