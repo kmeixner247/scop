@@ -2,7 +2,7 @@
 #define SHADER_HPP
 #include <iostream>
 #include <sstream>
-#include "scop.hpp"
+#include "../scop.hpp"
 class Shader {
 public:
 	Shader();

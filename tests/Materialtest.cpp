@@ -1,8 +1,8 @@
-#include "Material.hpp"
-#include<iostream>
-#include<fstream>
-#include<sstream>
-#include<string>
+#include "../include/objects/Material.hpp"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 std::vector<Material> parseMaterials(std::string const &src) {
     std::stringstream ss;
@@ -25,7 +25,7 @@ std::vector<Material> parseMaterials(std::string const &src) {
 }
 
 
-
 int main() {
     std::vector<Material> mats = parseMaterials("test2.mtl");
+    std::cout << mats.size() << std::endl;
 }

@@ -12,22 +12,22 @@ void Material::_handleNs(std::string_view lineView) {
 
 void Material::_handleKa(std::string_view lineView) {
     lineView.remove_prefix(3);
-    _ka = parseVector(lineView);
+    _ka = parseVec3(lineView);
 }
 
 void Material::_handleKd(std::string_view lineView) {
     lineView.remove_prefix(3);
-    _kd = parseVector(lineView);
+    _kd = parseVec3(lineView);
 }
 
 void Material::_handleKs(std::string_view lineView) {
     lineView.remove_prefix(3);
-    _ks = parseVector(lineView);
+    _ks = parseVec3(lineView);
 }
 
 void Material::_handleKe(std::string_view lineView) {
     lineView.remove_prefix(3);
-    _ke = parseVector(lineView);
+    _ke = parseVec3(lineView);
 }
 
 void Material::_handleNi(std::string_view lineView) {
@@ -46,15 +46,15 @@ void Material::_handleIllum(std::string_view lineView) {
 }
 
 void Material::_initializeLineHandlerMap() {
-    _lineHandlerMap["newmtl"] = &Material::_handleName;
-    _lineHandlerMap["Ns"] = &Material::_handleNs;
-    _lineHandlerMap["Ka"] = &Material::_handleKa;
-    _lineHandlerMap["Kd"] = &Material::_handleKd;
-    _lineHandlerMap["Ks"] = &Material::_handleKs;
-    _lineHandlerMap["Ke"] = &Material::_handleKe;
-    _lineHandlerMap["Ni"] = &Material::_handleNi;
-    _lineHandlerMap["d"] = &Material::_handleD;
-    _lineHandlerMap["illum"] = &Material::_handleIllum;
+    _lineHandlerMap["newmtl "] = &Material::_handleName;
+    _lineHandlerMap["Ns "] = &Material::_handleNs;
+    _lineHandlerMap["Ka "] = &Material::_handleKa;
+    _lineHandlerMap["Kd "] = &Material::_handleKd;
+    _lineHandlerMap["Ks "] = &Material::_handleKs;
+    _lineHandlerMap["Ke "] = &Material::_handleKe;
+    _lineHandlerMap["Ni "] = &Material::_handleNi;
+    _lineHandlerMap["d "] = &Material::_handleD;
+    _lineHandlerMap["illum "] = &Material::_handleIllum;
 }
 
 
@@ -74,8 +74,8 @@ Material::Material(const std::string &src) {
     while (srcStream) {
         getline(srcStream, line);
         lineView = line;
-        _cutCommentsFrom(lineView);
-        _trimWhitespaceFrom(lineView);
+        cutCommentsFrom(lineView);
+        trimWhitespaceFrom(lineView);
         _interpretLine(lineView);
     }
 }

@@ -1,4 +1,4 @@
-#include "scop.hpp"
+#include "../include/scop.hpp"
 
 
 static size_t find_character(const std::string &s, char c) {

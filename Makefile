@@ -1,6 +1,6 @@
 NAME = scop
 
-SRCS = parse.cpp main.cpp Shader.cpp GLFW.cpp
+SRCS = src/parse.cpp src/main.cpp src/objects/Shader.cpp src/objects/GLFW.cpp
 
 LIBS = libglfw3.a
 

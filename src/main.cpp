@@ -1,6 +1,6 @@
-#include "scop.hpp"
+#include "../include/scop.hpp"
 #define STB_IMAGE_IMPLEMENTATION
-#include "include/stb_image.h"
+#include "../external/stb_image.h"
 // c++ parsetest.cpp parse.cpp libglfw3.a -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1
 const GLint WIDTH = 800, HEIGHT = 600;
 const float MOV_SPEED = 0.05;
