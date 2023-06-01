@@ -127,7 +127,7 @@ void parse(const std::string &filename, t_data &data) {
 				n_index = std::stoi(elements[1]) - 1;
 				e.normal = data.v_normals[n_index];
 			}
-			data.v_indices.push_back(lol++);
+			data.v_indices.push_back(data.v_indices.size());
 			data.vbo.push_back(e);
 		}
 		// face.normal = ft::crossproduct(face.vertices[0], face.vertices[1]);

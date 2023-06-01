@@ -195,6 +195,7 @@ int main()
 			// glUniform4f(vertexColorLocation, col, col, col, 1.0f);
 			glBindTexture(GL_TEXTURE_2D, texture);
 			glDrawElements(GL_TRIANGLE_FAN, data.v_faces[i].size, GL_UNSIGNED_INT, (void *)(data.v_faces[i].offset * sizeof(GLuint)));
+			// glDrawArrays(GL_TRIANGLES, 0, data.v_indices.size());
 		}
 		glBindVertexArray(0);
 		// END

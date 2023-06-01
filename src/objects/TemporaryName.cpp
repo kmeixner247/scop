@@ -59,30 +59,60 @@ void TemporaryName::_handleNormalVector(std::string_view lineView) {
 
 void TemporaryName::_handleObject(std::string_view lineView) {
     lineView.remove_prefix(2);
-    std::cout << lineView << std::endl;
+    std::cout << "OBJ" << lineView << std::endl;
 }
 
 void TemporaryName::_handleGroup(std::string_view lineView) {
     lineView.remove_prefix(2);
-    std::cout << lineView << std::endl;
+    std::cout << "GRP" << lineView << std::endl;
 }
 
 void TemporaryName::_handleMaterial(std::string_view lineView) {
     lineView.remove_prefix(7);
-    std::cout << lineView << std::endl;
+    std::cout << "MAT" << lineView << std::endl;
 }
 
 void TemporaryName::_handleFace(std::string_view lineView) {
     lineView.remove_prefix(2);
+    t_vbo_element point;
+    size_t index;
+    t_face face;
     std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
+    face.size = points.size();
     for (int i = 0; i < points.size(); i++) {
         std::vector<std::string> element = splitLineByCharacter(std::string_view(points[i]), '/');
+        
+        // vertex coordinate
+        size_t index = std::stoi(element[0]) - 1;
+        if (index < 0)
+            index += _v_vertices.size();
+        point.vertex = _v_vertices[index];
+
+        // texture coordinate
+        if (element.size() > 1 && element[1].compare("")) {
+            index = std::stoi(element[1]) - 1;
+            if (index < 0)
+                index += _v_texcoords.size();
+            point.texcoords = _v_texcoords[index];
+        }
+        else
+            point.texcoords = ft::vec2();
+
+        // normal vector
+        if (element.size() == 3) {
+            index = std::stoi(element[2]) - 1;
+            if (index < 0)
+                index += _v_normals.size();
+            point.normal = _v_normals[index];
+        }
+        _vbo.push_back(point);
     }
+    // std::cout << point.vertex << "  " << point.texcoords << "  " << point.normal << std::endl;
 }
 
 void TemporaryName::_handleSmoothShading(std::string_view lineView) {
     lineView.remove_prefix(2);
-    std::cout << lineView << std::endl;
+    std::cout << "S" << lineView << std::endl;
 }
 
 void TemporaryName::_initializeLineHandlerMap() {
