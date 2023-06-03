@@ -2,7 +2,7 @@ NAME = scop
 
 SRCS = src/parse.cpp src/main.cpp src/objects/Shader.cpp src/objects/GLFW.cpp
 
-TSRCS = src/objects/Shader.cpp src/objects/GLFW.cpp src/objects/Scene.cpp testing.cpp src/objects/Material.cpp src/utils.cpp
+TSRCS = src/objects/Shader.cpp src/objects/GLFW.cpp src/objects/Scene.cpp testing.cpp src/objects/Material.cpp src/utils.cpp src/objects/VertexArray.cpp
 
 LIBS = libglfw3.a
 

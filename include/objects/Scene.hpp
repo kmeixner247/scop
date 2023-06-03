@@ -4,13 +4,41 @@
 #include "../math/vec3.hpp"
 #include "../math/vec2.hpp"
 #include "Material.hpp"
+#include "VertexArray.hpp"
 #include "fstream"
 
 
 #include <OpenGL/gl3.h>
 
 class WavefrontLoader {
+private:
+    typedef struct s_vbo_element {
+        ft::vec3 vertex;
+        ft::vec2 texCoords;
+        ft::vec3 normal;
+    } t_vbo_element;
 
+    std::vector<t_vbo_element> _vbo;
+    std::vector<ft::vec3> _v_vertices;
+    std::vector<ft::vec2> _v_texcoords;
+    std::vector<ft::vec3> _v_normals;
+
+    std::vector<Material> _v_mtllib;
+
+
+    std::vector<Material> _parseMaterials(std::string const &src);
+    void _readFileIntoString(std::string const &path);
+    void _interpretLine(std::string_view const &lineView);
+    void _initializeLineHandlerMap();
+    void _handleMtllib(std::string_view lineView);
+    void _handleVertex(std::string_view lineView);
+    void _handleTextureCoordinate(std::string_view lineView);
+    void _handleNormalVector(std::string_view lineView);
+    void _handleObject(std::string_view lineView);
+    void _handleGroup(std::string_view lineView);
+    void _handleMaterial(std::string_view lineView);
+    void _handleFace(std::string_view lineView);
+    void _handleSmoothShading(std::string_view lineView);
 };
 
 class LightSource {
@@ -57,6 +85,16 @@ private:
     typedef void(Scene::*handlerFunction)(std::string_view);
     std::map<std::string, handlerFunction> _lineHandlerMap;
     std::string _src;
+
+    // Vertex Array
+    VertexArray _vao;
+public:
+    void configureVao() {
+        _vao.configure();
+    }
+    unsigned int getVao() const {
+        return _vao.getId();
+    }
 
     // lightsource
     LightSource _lightSource;

@@ -10,15 +10,8 @@ int main() {
     Scene myScene("resources/skull2.obj");
 
     myScene.bind();
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(5 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	myScene.configureVao();
+
 	ft::mat4 view;
 	ft::mat4 proj = ft::perspective(ft::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
@@ -39,7 +32,7 @@ int main() {
 		ft::vec3 asdf(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 2.0f);
 		view = ft::translate(view, asdf);
 		int lightPosLocation = glGetUniformLocation(shader.getId(), "lightPos");
-		glUniform3f(lightPosLocation, 1.0f, 0, 0.5f);
+		glUniform3f(lightPosLocation, 5.0f, 0, 5.5f);
 		int viewPosLocation = glGetUniformLocation(shader.getId(), "viewPos");
         shader.useValue("ambientColor", ambient);
         shader.useValue("diffuseColor", diffuse);
@@ -49,7 +42,7 @@ int main() {
         shader.useValue("proj", proj);
         shader.useValue("model", GLFW.getRot());
 
-        myScene.draw(VAO);
+        myScene.draw(myScene.getVao());
 
 		glfwPollEvents();
 		glfwSwapBuffers(GLFW.getWindow());
