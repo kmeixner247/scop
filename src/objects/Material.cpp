@@ -81,9 +81,9 @@ Material::Material(const std::string &src) {
 }
 
 Material::Material() : 
-_name(""), 
+_name("None"), 
 _ns(0), 
-_ka(ft::vec3(0)), 
+_ka(ft::vec3(1.0)), 
 _kd(ft::vec3(0)), 
 _ks(ft::vec3(0)),
 _ke(ft::vec3(0)),

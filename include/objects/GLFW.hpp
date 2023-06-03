@@ -29,7 +29,7 @@ public:
 	GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED);
 	~GLFW() { glfwTerminate(); }
 	GLFWwindow *getWindow() { return this->_window; }
-	const GLfloat *getRot() { return &(this->_rot[0][0]); }
+	ft::mat4 getRot() { return this->_rot; }
 	float getMov(int ind) { return this->_mov[ind]; }
 	GLboolean shouldClose() { return glfwWindowShouldClose(this->_window); }
 	void processInput();

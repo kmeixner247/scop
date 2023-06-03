@@ -75,3 +75,12 @@ void Shader::use() {
 unsigned int Shader::getId(){
 	return this->_id;
 }
+
+void Shader::useValue(std::string const &name, ft::vec3 const &val) {
+	GLuint location = glGetUniformLocation(_id, name.c_str());
+	glUniform3f(location, val[0], val[1], val[2]);
+}
+void Shader::useValue(std::string const &name, ft::mat4 const &val) {
+	GLuint location = glGetUniformLocation(_id, name.c_str());
+	glUniformMatrix4fv(location, 1, GL_FALSE, &val[0][0]);
+}
