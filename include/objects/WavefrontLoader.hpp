@@ -14,12 +14,16 @@ typedef struct s_vbo_element {
 
 class WavefrontObject {
 private:   
-    std::vector<t_vbo_element> _vbo;
+    std::vector<t_vbo_element> _data;
+    unsigned int _vbo;
 public:
     WavefrontObject() {}
-    WavefrontObject(WavefrontObject const &rhs) : _vbo(rhs._vbo) {}
-    void draw();
-    void add(t_vbo_element const &face) { _vbo.push_back(face); }
+    WavefrontObject(WavefrontObject const &rhs) : _data(rhs._data) {}
+    void draw() {
+
+    }
+    void add(t_vbo_element const &face) { _data.push_back(face); }
+    int size() { return _data.size(); }
 };
 
 class WavefrontLoader {

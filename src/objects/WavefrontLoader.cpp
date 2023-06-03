@@ -66,8 +66,9 @@ void WavefrontLoader::_handleGroup(std::string_view lineView) {
 void WavefrontLoader::_handleMaterial(std::string_view lineView) {
     lineView.remove_prefix(7);
     _currentMaterial = std::string(lineView);
-    std::cout << "currentMaterial " << _currentMaterial << std::endl;
-    _objects.emplace(std::make_pair(_currentMaterial, std::map<int, WavefrontObject>()));
+    if (_objects.count(_currentMaterial) == 0) {
+        _objects.insert(std::make_pair(_currentMaterial, std::map<int, WavefrontObject>()));
+    }
 }
 
 void WavefrontLoader::_handleFace(std::string_view lineView) {
@@ -75,7 +76,9 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
     t_vbo_element point;
     size_t index;
     std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
-    _objects[_currentMaterial].emplace(std::make_pair(points.size(), WavefrontObject()));
+    if (_objects[_currentMaterial].count(points.size()) == 0) {
+        _objects[_currentMaterial].insert(std::make_pair(points.size(), WavefrontObject()));
+    }
     for (int i = 0; i < points.size(); i++) {
         std::vector<std::string> element = splitLineByCharacter(std::string_view(points[i]), '/');
         
@@ -137,5 +140,14 @@ WavefrontLoader::WavefrontLoader(std::string const &path) {
         cutCommentsFrom(lineView);
         trimWhitespaceFrom(lineView);
         _interpretLine(lineView);
+    }
+    // for (auto it = _objects.begin(); it != _objects.end(); it++) {
+    //     std::cout << "lol" << std::endl;
+    // }
+    for (auto test : _objects) {
+        std::cout << "MAT: " << test.first << std::endl;
+        for (auto test2 : test.second) {
+            std::cout << test2.first << ":" << test2.second.size() << std::endl;
+        }
     }
 }
