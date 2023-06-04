@@ -10,7 +10,9 @@ void VertexArray::configure() {
 	glEnableVertexAttribArray(2);
 }
 
-VertexArray::VertexArray() {
+VertexArray::VertexArray() : _id(0) {}
+
+void VertexArray::init() {
     glGenVertexArrays(1, &_id);
 }
 

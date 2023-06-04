@@ -14,4 +14,5 @@ public:
     ~VertexArray();
     void bind();
     unsigned int getId() const;
+    void init();
 };

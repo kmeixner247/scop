@@ -6,7 +6,7 @@
 #include "Material.hpp"
 #include "VertexArray.hpp"
 #include "fstream"
-
+#include "WavefrontLoader.hpp"
 
 #include <OpenGL/gl3.h>
 
@@ -55,16 +55,6 @@ private:
     std::map<std::string, handlerFunction> _lineHandlerMap;
     std::string _src;
 
-    // Vertex Array
-    VertexArray _vao;
-public:
-    void configureVao() {
-        _vao.configure();
-    }
-    unsigned int getVao() const {
-        return _vao.getId();
-    }
-
     // lightsource
     LightSource _lightSource;
 public:
@@ -76,9 +66,11 @@ public:
         return _lightSource.getPos();
     }
 
+
 private:
     // camera
     Camera _camera;
+
 public:
     void moveCamera(ft::vec3 const &vec) { 
         _camera.move(vec); 
@@ -86,47 +78,37 @@ public:
 
 
 private:
-    // basically temps
-    std::vector<ft::vec3> _v_vertices;
-    std::vector<ft::vec2> _v_texcoords;
-    std::vector<ft::vec3> _v_normals;
-
+    std::map<std::string, WavefrontObject> _objects;
+public:
+    void loadObjects(WavefrontLoader &loader) {
+        _objects = loader._objects;
+    }
+private:
     // all the different materials, might have to activate different ones
     std::vector<Material> _v_mtllib;
+public:
+    void loadMtllib(WavefrontLoader &loader) {
+        _v_mtllib = loader._v_mtllib;
+    }
 
-    // the important data segment. Will need different ones for different groups/objects?
-    std::vector<t_vbo_element> _vbo;
-
-    std::vector<Material> _parseMaterials(std::string const &src);
-    void _readFileIntoString(std::string const &path);
-    void _interpretLine(std::string_view const &lineView);
-    void _initializeLineHandlerMap();
-    void _handleMtllib(std::string_view lineView);
-    void _handleVertex(std::string_view lineView);
-    void _handleTextureCoordinate(std::string_view lineView);
-    void _handleNormalVector(std::string_view lineView);
-    void _handleObject(std::string_view lineView);
-    void _handleGroup(std::string_view lineView);
-    void _handleMaterial(std::string_view lineView);
-    void _handleFace(std::string_view lineView);
-    void _handleSmoothShading(std::string_view lineView);
     Scene() {}
     Scene(Scene const &rhs) {}
     Scene &operator=(Scene const &rhs) { return *this; }
+
+    
 public:
     Scene(std::string const &path);
 
     void bind() {
-        unsigned int VBO;
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, _vbo.size() * 8 * sizeof(float), &(_vbo[0]), GL_STATIC_DRAW);
+    for (auto it = _objects.begin(); it != _objects.end(); it++) {
+            it->second.push();
+        }
     }
 
     void draw() {
-        glEnable(GL_DEPTH_TEST);
-		glBindVertexArray(_vao.getId());
-		glDrawArrays(GL_TRIANGLES, 0, _vbo.size());
+        for (auto test1 : _objects) {
+            test1.second.draw();
+        }
 		glBindVertexArray(0);
     }
 

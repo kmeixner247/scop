@@ -7,20 +7,27 @@
 #include "fstream"
 #include "../scop.hpp"
 #include "VertexBuffer.hpp"
+#include "VertexArray.hpp"
+
+class Scene;
 
 class WavefrontObject {
 private:   
     std::vector<t_vbo_element> _data;
+    VertexArray _vao;
     VertexBuffer _vbo;
 public:
     WavefrontObject() {}
-    WavefrontObject(WavefrontObject const &rhs) : _data(rhs._data) {}
+    WavefrontObject(WavefrontObject const &rhs) : _data(rhs._data), _vao(rhs._vao), _vbo(rhs._vbo) {}
     void draw() {
-        _vbo.bind();
+        _vao.bind();
         glDrawArrays(GL_TRIANGLES, 0, size());
     }
     void push() {
-        _vbo.push();
+        _vbo.init();
+        _vbo.push(_data);
+        _vao.init();
+        _vao.configure();
     }
     void add(t_vbo_element const &face) { _data.push_back(face); }
     int size() { return _data.size(); }
@@ -32,7 +39,7 @@ private:
     typedef void(WavefrontLoader::*handlerFunction)(std::string_view);
     std::map<std::string, handlerFunction> _lineHandlerMap;
     std::string _src;
-    std::map<std::string, std::map<int, WavefrontObject> > _objects;
+    std::map<std::string, WavefrontObject> _objects;
 
     std::vector<ft::vec3> _v_vertices;
     std::vector<ft::vec2> _v_texcoords;
@@ -56,7 +63,9 @@ private:
     void _handleMaterial(std::string_view lineView);
     void _handleFace(std::string_view lineView);
     void _handleSmoothShading(std::string_view lineView);
+    void _doMathStuff(std::vector<t_vbo_element> &lol);
 
 public:
     WavefrontLoader(std::string const &path);
+    friend class Scene;
 };

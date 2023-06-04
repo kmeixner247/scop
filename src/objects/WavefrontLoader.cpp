@@ -67,18 +67,16 @@ void WavefrontLoader::_handleMaterial(std::string_view lineView) {
     lineView.remove_prefix(7);
     _currentMaterial = std::string(lineView);
     if (_objects.count(_currentMaterial) == 0) {
-        _objects.insert(std::make_pair(_currentMaterial, std::map<int, WavefrontObject>()));
+        _objects.insert(std::make_pair(_currentMaterial, WavefrontObject()));
     }
 }
 
 void WavefrontLoader::_handleFace(std::string_view lineView) {
     lineView.remove_prefix(2);
+    std::vector<t_vbo_element> temp;
     t_vbo_element point;
     size_t index;
     std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
-    if (_objects[_currentMaterial].count(points.size()) == 0) {
-        _objects[_currentMaterial].insert(std::make_pair(points.size(), WavefrontObject()));
-    }
     for (int i = 0; i < points.size(); i++) {
         std::vector<std::string> element = splitLineByCharacter(std::string_view(points[i]), '/');
         
@@ -107,7 +105,15 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
                 index += _v_normals.size();
             point.normal = _v_normals[index];
         }
-        _objects[_currentMaterial][points.size()].add(point);
+        temp.push_back(point);
+    }
+    _objects[_currentMaterial].add(temp[0]);
+    _objects[_currentMaterial].add(temp[1]);
+    _objects[_currentMaterial].add(temp[2]);
+    for (size_t i = 2; i < temp.size(); i++) {
+        _objects[_currentMaterial].add(temp[0]);
+        _objects[_currentMaterial].add(temp[i - 1]);
+        _objects[_currentMaterial].add(temp[i]);
     }
 }
 
@@ -140,14 +146,5 @@ WavefrontLoader::WavefrontLoader(std::string const &path) {
         cutCommentsFrom(lineView);
         trimWhitespaceFrom(lineView);
         _interpretLine(lineView);
-    }
-    // for (auto it = _objects.begin(); it != _objects.end(); it++) {
-    //     std::cout << "lol" << std::endl;
-    // }
-    for (auto test : _objects) {
-        std::cout << "MAT: " << test.first << std::endl;
-        for (auto test2 : test.second) {
-            std::cout << test2.first << ":" << test2.second.size() << std::endl;
-        }
     }
 }

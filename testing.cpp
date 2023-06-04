@@ -6,14 +6,15 @@ const float MOV_SPEED = 0.05;
 #include <iostream>
 
 int main() {
-	return 0;
 	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
-	WavefrontLoader temp("resources/skull2.obj");
+	WavefrontLoader temp("resources/42_textured.obj");
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
-    Scene myScene("resources/skull2.obj");
+    Scene myScene;
 
+	myScene.loadObjects(temp);
+	myScene.loadMtllib(temp);
     myScene.bind();
-	myScene.configureVao();
+	glEnable(GL_DEPTH_TEST);
 
 	ft::mat4 view;
 	ft::mat4 proj = ft::perspective(ft::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
@@ -44,7 +45,6 @@ int main() {
         shader.useValue("model", GLFW.getRot());
 
         myScene.draw();
-
 		glfwPollEvents();
 		glfwSwapBuffers(GLFW.getWindow());
     }
