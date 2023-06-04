@@ -1,6 +1,6 @@
 #include "../../include/objects/Camera.hpp"
 
-Camera::Camera() : _pos(ft::vec3(0, 0, -3)), _dir(ft::vec3(0, 0, 1)) {
+Camera::Camera() : _pos(ft::vec3(0, 0, 3)), _dir(ft::vec3(0, 0, -1)) {
 }
 
 Camera::Camera(Camera const &rhs) : _pos(rhs._pos), _dir(rhs._dir) {

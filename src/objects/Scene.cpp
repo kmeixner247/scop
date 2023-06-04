@@ -17,8 +17,16 @@ void Scene::setLightPos(ft::vec3 const &pos) {
     _lightSource.setPos(pos);
 }
 
-ft::vec3 Scene::getLightPos(ft::vec3 const &pos) const {
+ft::vec3 Scene::getLightPos() const {
     return _lightSource.getPos();
+}
+
+void Scene::setCameraPos(ft::vec3 const &pos) {
+    _camera.setPos(pos);
+}
+
+ft::vec3 Scene::getCameraPos() const {
+    return _camera.getPos();
 }
 
 void Scene::moveCamera(ft::vec3 const &vec) { 
@@ -39,6 +47,39 @@ void Scene::bind() {
     }
 }
 
+void Scene::center() {
+    ft::vec3 center;
+    int size = 0;
+    for (auto obj : _objects) {
+        size += obj.second.size();
+        for (auto face : obj.second.getData()) {
+            center += face.vertex;
+        }
+    }
+    center /= size;
+    for (auto it = _objects.begin(); it != _objects.end(); it++) {
+        it->second.move(-center);
+    }
+}
+
+void Scene::scale(float const &scale) {
+    float max = 0;
+    for (auto obj : _objects) {
+        for (auto face : obj.second.getData()) {
+        if (fabs(face.vertex.x) > max)
+            max = face.vertex.x;
+        if (fabs(face.vertex.y) > max)
+            max = face.vertex.y;
+        if (fabs(face.vertex.z) > max)
+            max = face.vertex.z;
+        }
+    }
+    float factor = (scale / 2) / max;
+    for (auto it = _objects.begin(); it != _objects.end(); it++) {
+        it->second.scale(factor);
+    }
+}
+
 void Scene::draw(Shader const &shader) const {
     shader.use();
     for (auto test1 : _objects) {
@@ -51,7 +92,3 @@ void Scene::draw(Shader const &shader) const {
     }
     glBindVertexArray(0);
 }
-
-
-
-

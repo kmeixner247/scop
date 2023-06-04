@@ -45,12 +45,12 @@ void GLFW::rotate(float angle, int mode)
     this->_rot = ft::rotate(this->_rot, ft::radians(angle), axis);
 }
 
-void GLFW::processInput() {
+void GLFW::processInput(Scene &scene) {
 	std::map<int, GLFW::keyFunction>::iterator it = this->_keyMap.begin();
 	for (;it != this->_keyMap.end(); it++) {
 		if (glfwGetKey(this->_window, it->first) == GLFW_PRESS) {
 			GLFW::keyFunction func = it->second;
-			(this->*func)();
+			(this->*func)(scene);
 		} 
 	}
 }

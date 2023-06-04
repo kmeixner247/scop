@@ -21,11 +21,14 @@ public:
     ~Scene();
     
     void setLightPos(ft::vec3 const &pos);
-    ft::vec3 getLightPos(ft::vec3 const &pos) const;
+    ft::vec3 getLightPos() const;
+    void setCameraPos(ft::vec3 const &pos);
+    ft::vec3 getCameraPos() const;
     void moveCamera(ft::vec3 const &vec);
     void loadObjects(WavefrontLoader &loader);
     void loadMtllib(WavefrontLoader &loader);
-
     void bind();
+    void center();
+    void scale(float const &scale);
     void draw(Shader const &shader) const;
 };

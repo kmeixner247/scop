@@ -17,6 +17,7 @@ public:
     void push();
     void add(t_vbo_element const &face);
     int size();
-    void center();
-    void scale(float const &scale);
+    void scale(float const &factor);
+    void move(ft::vec3 vec);
+    std::vector<t_vbo_element> getData() const;
 };

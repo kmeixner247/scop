@@ -10,7 +10,6 @@
 #include <math.h>
 #include "objects/Shader.hpp"
 #include "math/math.hpp"
-#include "objects/GLFW.hpp"
 
 typedef struct s_vbo_element {
     ft::vec3 vertex;
