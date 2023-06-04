@@ -22,6 +22,9 @@ void WavefrontObject::draw() {
 }
 
 void WavefrontObject::push() {
+    scale(2.0);
+    scale(2.0);
+    center();
     _vbo.init();
     _vbo.push(_data);
     _vao.init();
@@ -34,4 +37,36 @@ void WavefrontObject::add(t_vbo_element const &face) {
 
 int WavefrontObject::size() {
     return _data.size();
+}
+
+void WavefrontObject::center() {
+    ft::vec3 center;
+    for (auto obj : _data) {
+        center.x += obj.vertex.x;
+        center.y += obj.vertex.y;
+        center.z += obj.vertex.z;
+    }
+    center /= float(_data.size());
+    for (auto it = _data.begin(); it != _data.end(); it++) {
+        it->vertex -= center;
+    }
+}
+
+void WavefrontObject::scale(float const &scale) {
+    float max = 0;
+    for (auto obj : _data) {
+        if (fabs(obj.vertex.x) > max)
+            max = obj.vertex.x;
+        if (fabs(obj.vertex.y) > max)
+            max = obj.vertex.y;
+        if (fabs(obj.vertex.z) > max)
+            max = obj.vertex.z;
+    }
+    for (auto it = _data.begin(); it != _data.end(); it++) {
+        it->vertex = it->vertex / max * scale/2;
+    }
+    std::cout << max << std::endl;
+    // for (auto obj: _data) {
+    //     std::cout << obj.vertex << std::endl;
+    // }
 }

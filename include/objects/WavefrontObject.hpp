@@ -17,4 +17,6 @@ public:
     void push();
     void add(t_vbo_element const &face);
     int size();
+    void center();
+    void scale(float const &scale);
 };
