@@ -24,7 +24,7 @@ void VertexBuffer::bind() {
 
 void VertexBuffer::push(std::vector<t_vbo_element> const &data) {
     bind();
-    glBufferData(GL_ARRAY_BUFFER, data.size() * 8 * sizeof(float), &(data[0]), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data.size() * 11 * sizeof(float), &(data[0]), GL_STATIC_DRAW);
 }
 
 unsigned int VertexBuffer::getId() const {

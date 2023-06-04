@@ -1,4 +1,5 @@
 #include "../include/scop.hpp"
+#include <random>
 
 std::vector<std::string> splitLineByCharacter(std::string_view lineView, char del) {
     std::vector<std::string> vals;
@@ -46,4 +47,11 @@ void readFileIntoString(std::string const &path, std::string &dest) {
     std::ifstream file(path);
     ss << file.rdbuf();
     dest = ss.str();
+}
+
+float generateRandomNumber() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+    return dis(gen);
 }

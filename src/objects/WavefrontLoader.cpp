@@ -1,4 +1,5 @@
 #include "../../include/objects/WavefrontLoader.hpp"
+#include <random>
 
 void WavefrontLoader::_readFileIntoString(std::string const &path) {
     std::stringstream ss;
@@ -75,6 +76,9 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
     lineView.remove_prefix(2);
     std::vector<t_vbo_element> temp;
     t_vbo_element point;
+    point.randomColor.x = generateRandomNumber();
+    point.randomColor.y = generateRandomNumber();
+    point.randomColor.z = generateRandomNumber();
     size_t index;
     std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
     for (int i = 0; i < points.size(); i++) {

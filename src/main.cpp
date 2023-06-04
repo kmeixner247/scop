@@ -7,7 +7,7 @@ const float MOV_SPEED = 0.05;
 
 int main() {
 	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
-	WavefrontLoader temp("resources/42_textured.obj");
+	WavefrontLoader temp("resources/skull2.obj");
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
     Scene myScene;
 
@@ -24,7 +24,6 @@ int main() {
 	ft::vec3 testvec(0,0,-3.0f);
 	test = ft::translate(test, -testvec);
 	std::cout << myScene.getCameraPos();
-	// std::cout << test << std::endl;
     while (!GLFW.shouldClose()) {
         GLFW.processInput(myScene);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

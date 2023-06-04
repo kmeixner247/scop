@@ -56,6 +56,7 @@ in vec3 FragPos;
 in vec4 Normal;         // Normal vector of the fragment
 
 out vec4 fragColor;
+in vec4 aRandomColor;
 
 void main()
 {
@@ -83,5 +84,5 @@ void main()
     vec3 specular = specularColor * specularFactor;
 
     // Set the fragment color as the sum of diffuse and specular colors
-    fragColor = vec4(ambientColor + diffuse + specular, 1.0);
+    fragColor = aRandomColor * vec4(ambientColor + diffuse + specular, 1.0);
 }
