@@ -6,32 +6,9 @@
 #include "../math/math.hpp"
 #include "fstream"
 #include "../scop.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexArray.hpp"
+#include "WavefrontObject.hpp"
 
 class Scene;
-
-class WavefrontObject {
-private:   
-    std::vector<t_vbo_element> _data;
-    VertexArray _vao;
-    VertexBuffer _vbo;
-public:
-    WavefrontObject() {}
-    WavefrontObject(WavefrontObject const &rhs) : _data(rhs._data), _vao(rhs._vao), _vbo(rhs._vbo) {}
-    void draw() {
-        _vao.bind();
-        glDrawArrays(GL_TRIANGLES, 0, size());
-    }
-    void push() {
-        _vbo.init();
-        _vbo.push(_data);
-        _vao.init();
-        _vao.configure();
-    }
-    void add(t_vbo_element const &face) { _data.push_back(face); }
-    int size() { return _data.size(); }
-};
 
 class WavefrontLoader {
 private:

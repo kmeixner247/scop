@@ -1,8 +1,16 @@
 NAME = scop
 
-SRCS = src/parse.cpp src/main.cpp src/objects/Shader.cpp src/objects/GLFW.cpp
-
-TSRCS = src/objects/Shader.cpp src/objects/GLFW.cpp src/objects/Scene.cpp testing.cpp src/objects/Material.cpp src/utils.cpp src/objects/VertexArray.cpp src/objects/WavefrontLoader.cpp src/objects/VertexBuffer.cpp
+SRCS =	src/main.cpp \
+		src/objects/Shader.cpp \
+		src/objects/GLFW.cpp \
+		src/objects/Scene.cpp \
+		src/objects/Material.cpp \
+		src/utils.cpp src/objects/VertexArray.cpp \
+		src/objects/WavefrontLoader.cpp \
+		src/objects/VertexBuffer.cpp \
+		src/objects/Camera.cpp \
+		src/objects/LightSource.cpp \
+		src/objects/WavefrontObject.cpp
 
 LIBS = libglfw3.a
 
