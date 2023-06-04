@@ -7,7 +7,7 @@ const float MOV_SPEED = 0.05;
 
 int main() {
 	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
-	WavefrontLoader temp("resources/42_textured.obj");
+	WavefrontLoader temp("resources/42.obj");
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
     Scene myScene;
 
@@ -24,27 +24,24 @@ int main() {
 	ft::vec3 diffuse = ft::vec3(0.4f, 0.0f, 0.0f);
 	ft::vec3 specular = ft::vec3(0.3f,  0.3f, 0.3f);
 
-    shader.use();
     while (!GLFW.shouldClose()) {
         GLFW.processInput();
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		view = ft::mat4(1.0f);
-		ft::vec3 asdf(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 2.0f);
+		ft::vec3 asdf(GLFW.getMov(0), GLFW.getMov(1), GLFW.getMov(2) - 3.0f);
 		view = ft::translate(view, asdf);
 		int lightPosLocation = glGetUniformLocation(shader.getId(), "lightPos");
-		glUniform3f(lightPosLocation, 5.0f, 0, 5.5f);
+		glUniform3f(lightPosLocation, 3.0f, 0, 3.5f);
 		int viewPosLocation = glGetUniformLocation(shader.getId(), "viewPos");
-        shader.useValue("ambientColor", ambient);
-        shader.useValue("diffuseColor", diffuse);
-        shader.useValue("specularColor", specular);
         shader.useValue("view", view);
         shader.useValue("viewPos", view);
         shader.useValue("proj", proj);
         shader.useValue("model", GLFW.getRot());
 
-        myScene.draw();
+    	// shader.use();
+        myScene.draw(shader);
 		glfwPollEvents();
 		glfwSwapBuffers(GLFW.getWindow());
     }

@@ -39,8 +39,14 @@ void Scene::bind() {
     }
 }
 
-void Scene::draw() {
+void Scene::draw(Shader const &shader) const {
+    shader.use();
     for (auto test1 : _objects) {
+        for (auto it = _v_mtllib.begin(); it != _v_mtllib.end(); it++) {
+            if (!it->getName().compare(test1.first)) {
+                shader.useMaterial(*it);
+            }
+        }
         test1.second.draw();
     }
     glBindVertexArray(0);

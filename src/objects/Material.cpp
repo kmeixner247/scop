@@ -120,3 +120,22 @@ Material &Material::operator=(const Material &rhs) {
 }
 
 Material::~Material() {}
+
+std::string Material::getName() const {
+    return _name;
+}
+
+
+ft::vec3 Material::getKa() const {
+    return _ka;
+}
+ft::vec3 Material::getKd() const {
+    return _kd;
+}
+ft::vec3 Material::getKs() const {
+    return _ks;
+}
+
+void Material::use() const {
+    std::cout << "pls use me senpai" << std::endl;
+}

@@ -1,16 +1,12 @@
 #pragma once
 
-#include <vector>
-#include "../math/vec3.hpp"
-#include "../math/vec2.hpp"
-#include "Material.hpp"
-#include "VertexArray.hpp"
-#include "fstream"
+#include "../math/math.hpp"
 #include "WavefrontLoader.hpp"
 #include "Camera.hpp"
 #include "LightSource.hpp"
+#include "Shader.hpp"
 #include <OpenGL/gl3.h>
-
+#include <vector>
 
 class Scene {
 private:
@@ -31,5 +27,5 @@ public:
     void loadMtllib(WavefrontLoader &loader);
 
     void bind();
-    void draw();
+    void draw(Shader const &shader) const;
 };

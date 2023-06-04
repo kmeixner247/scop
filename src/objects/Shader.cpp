@@ -68,19 +68,25 @@ Shader &Shader::operator=(const Shader &rhs) {
 
 Shader::~Shader() {}
 
-void Shader::use() {
+void Shader::use() const {
 	glUseProgram(this->_id);
+}
+
+void Shader::useMaterial(Material const &mat) const {
+	useValue("ambientColor", mat.getKa());
+	useValue("diffuseColor", mat.getKd());
+	useValue("specularColor", mat.getKs());
 }
 
 unsigned int Shader::getId(){
 	return this->_id;
 }
 
-void Shader::useValue(std::string const &name, ft::vec3 const &val) {
+void Shader::useValue(std::string const &name, ft::vec3 const &val) const {
 	GLuint location = glGetUniformLocation(_id, name.c_str());
 	glUniform3f(location, val[0], val[1], val[2]);
 }
-void Shader::useValue(std::string const &name, ft::mat4 const &val) {
+void Shader::useValue(std::string const &name, ft::mat4 const &val) const {
 	GLuint location = glGetUniformLocation(_id, name.c_str());
 	glUniformMatrix4fv(location, 1, GL_FALSE, &val[0][0]);
 }
