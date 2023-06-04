@@ -5,22 +5,22 @@
 #include "Material.hpp"
 #include "../math/math.hpp"
 #include "fstream"
-
-typedef struct s_vbo_element {
-    ft::vec3 vertex;
-    ft::vec2 texCoords;
-    ft::vec3 normal;
-} t_vbo_element;
+#include "../scop.hpp"
+#include "VertexBuffer.hpp"
 
 class WavefrontObject {
 private:   
     std::vector<t_vbo_element> _data;
-    unsigned int _vbo;
+    VertexBuffer _vbo;
 public:
     WavefrontObject() {}
     WavefrontObject(WavefrontObject const &rhs) : _data(rhs._data) {}
     void draw() {
-
+        _vbo.bind();
+        glDrawArrays(GL_TRIANGLES, 0, size());
+    }
+    void push() {
+        _vbo.push();
     }
     void add(t_vbo_element const &face) { _data.push_back(face); }
     int size() { return _data.size(); }
@@ -33,8 +33,6 @@ private:
     std::map<std::string, handlerFunction> _lineHandlerMap;
     std::string _src;
     std::map<std::string, std::map<int, WavefrontObject> > _objects;
-    // std::vector<WavefrontObject> _objects;
-    // std::vector<t_vbo_element> _vbo;
 
     std::vector<ft::vec3> _v_vertices;
     std::vector<ft::vec2> _v_texcoords;

@@ -6,9 +6,9 @@ const float MOV_SPEED = 0.05;
 #include <iostream>
 
 int main() {
-	WavefrontLoader temp("resources/skull2.obj");
 	return 0;
 	GLFW GLFW(WIDTH, HEIGHT, MOV_SPEED);
+	WavefrontLoader temp("resources/skull2.obj");
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
     Scene myScene("resources/skull2.obj");
 

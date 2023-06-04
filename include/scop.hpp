@@ -11,3 +11,9 @@
 #include "objects/Shader.hpp"
 #include "math/math.hpp"
 #include "objects/GLFW.hpp"
+
+typedef struct s_vbo_element {
+    ft::vec3 vertex;
+    ft::vec2 texCoords;
+    ft::vec3 normal;
+} t_vbo_element;
