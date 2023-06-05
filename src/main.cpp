@@ -12,17 +12,13 @@ int main() {
     Scene myScene;
 
 	myScene.loadObjects(temp);
-	myScene.center();
-	myScene.scale(2.0);
+	myScene.scaleTo(2);
 	myScene.loadMtllib(temp);
     myScene.bind();
 	glEnable(GL_DEPTH_TEST);
 	ft::mat4 view;
 	ft::mat4 proj = ft::perspective(ft::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
-	ft::mat4 test(1.0f);
-	ft::vec3 testvec(0,0,-3.0f);
-	test = ft::translate(test, -testvec);
 	std::cout << myScene.getCameraPos();
     while (!GLFW.shouldClose()) {
         GLFW.processInput(myScene);
@@ -35,7 +31,6 @@ int main() {
         shader.useValue("view", view);
         shader.useValue("viewPos", myScene.getCameraPos());
         shader.useValue("proj", proj);
-        shader.useValue("model", GLFW.getRot());
         myScene.draw(shader);
 		glfwPollEvents();
 		glfwSwapBuffers(GLFW.getWindow());

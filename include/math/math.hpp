@@ -72,6 +72,16 @@ namespace ft {
 		return result;
 	}
 
+	inline mat4 scale(const mat4 &m4, const vec3 &v) {
+		mat4 scaled = m4;
+
+		scaled[0] *= v[0];
+		scaled[1] *= v[1];
+		scaled[2] *= v[2];
+		
+		return scaled;
+	}
+
 	inline vec3 crossproduct(const vec3 &v1, const vec3 &v2) {
 		vec3 temp;
 		temp.x = v1.y*v2.z - v1.z*v2.y;

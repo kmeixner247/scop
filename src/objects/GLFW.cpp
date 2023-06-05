@@ -32,6 +32,8 @@ GLFW::GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED) : _WIDTH(WIDTH), _HEIGHT(HE
 	_keyMap[GLFW_KEY_D] = &GLFW::keyD;
 	_keyMap[GLFW_KEY_I] = &GLFW::keyI;
 	_keyMap[GLFW_KEY_O] = &GLFW::keyO;
+	_keyMap[GLFW_KEY_K] = &GLFW::keyK;
+	_keyMap[GLFW_KEY_L] = &GLFW::keyL;
 	_mov[0] = 0;
 	_mov[1] = 0;
 	_mov[2] = 0;

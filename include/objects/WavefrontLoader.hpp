@@ -41,6 +41,7 @@ private:
     void _handleFace(std::string_view lineView);
     void _handleSmoothShading(std::string_view lineView);
     void _doMathStuff(std::vector<t_vbo_element> &lol);
+    void _centerObjects();
 
 public:
     WavefrontLoader(std::string const &path);

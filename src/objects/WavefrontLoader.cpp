@@ -151,4 +151,21 @@ WavefrontLoader::WavefrontLoader(std::string const &path) {
         trimWhitespaceFrom(lineView);
         _interpretLine(lineView);
     }
+    _centerObjects();
+}
+
+void WavefrontLoader::_centerObjects() {
+    ft::vec3 center;
+    int size = 0;
+    for (auto obj : _objects) {
+        size += obj.second.size();
+        for (auto face : obj.second.getData()) {
+            center += face.vertex;
+        }
+    }
+    center /= size;
+    center = -center;
+    for (auto it = _objects.begin(); it != _objects.end(); it++) {
+        it->second.move(center);
+    }
 }

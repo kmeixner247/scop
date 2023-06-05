@@ -58,11 +58,17 @@ void Scene::center() {
     }
     center /= size;
     for (auto it = _objects.begin(); it != _objects.end(); it++) {
-        it->second.move(-center);
+        it->second.translate(center);
     }
 }
 
-void Scene::scale(float const &scale) {
+void Scene::scale(float const &factor){
+    for (auto it = _objects.begin(); it != _objects.end(); it++) {
+        it->second.scale(factor);
+    }
+}
+
+void Scene::scaleTo(float const &scale) {
     float max = 0;
     for (auto obj : _objects) {
         for (auto face : obj.second.getData()) {
@@ -88,7 +94,14 @@ void Scene::draw(Shader const &shader) const {
                 shader.useMaterial(*it);
             }
         }
+        shader.useValue("model", test1.second.getModel());
         test1.second.draw();
     }
     glBindVertexArray(0);
+}
+
+void Scene::rotateObjects(float angle, int mode) {
+    for (auto it = _objects.begin(); it != _objects.end(); it++) {
+        it->second.rotate(angle, mode);
+    }
 }

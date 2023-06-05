@@ -29,6 +29,8 @@ public:
     void loadMtllib(WavefrontLoader &loader);
     void bind();
     void center();
-    void scale(float const &scale);
+    void scale(float const &factor);
+    void scaleTo(float const &scale);
     void draw(Shader const &shader) const;
+    void rotateObjects(float angle, int mode);
 };

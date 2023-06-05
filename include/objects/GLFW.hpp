@@ -13,18 +13,21 @@ private:
 	float _mov[3];
 	std::map<int, keyFunction> _keyMap;
 	void keyESC(Scene &scene) { glfwSetWindowShouldClose(this->_window, true); }
-	void keyUP(Scene &scene) { this->rotate(-2.0, 0); }
-	void keyDOWN(Scene &scene) { this->rotate(2.0, 0); }
-	void keyLEFT(Scene &scene) { this->rotate(2.0, 1); }
-	void keyRIGHT(Scene &scene) { this->rotate(-2.0, 1); }
-	void keyR(Scene &scene) { this->rotate(2.0, 2); }
-	void keyT(Scene &scene) { this->rotate(-2.0, 2); }
+	void keyUP(Scene &scene) { scene.rotateObjects(-2.0, 0); }
+	void keyDOWN(Scene &scene) { scene.rotateObjects(2.0, 0); }
+	void keyLEFT(Scene &scene) { scene.rotateObjects(2.0, 1); }
+	void keyRIGHT(Scene &scene) { scene.rotateObjects(-2.0, 1); }
+	void keyR(Scene &scene) { scene.rotateObjects(2.0, 2); }
+	void keyT(Scene &scene) { scene.rotateObjects(-2.0, 2); }
 	void keyD(Scene &scene) { scene.moveCamera(ft::vec3(this->_SPEED, 0, 0)); }
 	void keyA(Scene &scene) { scene.moveCamera(ft::vec3(-this->_SPEED, 0, 0)); }
 	void keyW(Scene &scene) { scene.moveCamera(ft::vec3(0, this->_SPEED, 0)); }
 	void keyS(Scene &scene) { scene.moveCamera(ft::vec3(0, -this->_SPEED, 0)); }
 	void keyO(Scene &scene) { scene.moveCamera(ft::vec3(0, 0, this->_SPEED)); }
 	void keyI(Scene &scene) { scene.moveCamera(ft::vec3(0, 0, -this->_SPEED)); }
+	void keyK(Scene &scene) { scene.scale(1.05); }
+	void keyL(Scene &scene) { scene.scale(0.95); }
+
 	void rotate(float angle, int mode);
 public:
 	GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED);
