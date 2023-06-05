@@ -53,13 +53,18 @@ uniform vec3 specularColor;   // Specular color of the material
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 in vec3 FragPos;
+in vec2 TexCoord;
 in vec4 Normal;         // Normal vector of the fragment
+
+uniform sampler2D ourTexture;
 
 out vec4 fragColor;
 in vec4 aRandomColor;
 
 void main()
 {
+	vec4 baseColor = texture(ourTexture, TexCoord).zyxw;
+
 	vec3 lightDirection = normalize(FragPos - lightPos);
 
     // Normalize the vertex normal
@@ -84,5 +89,5 @@ void main()
     vec3 specular = specularColor * specularFactor;
 
     // Set the fragment color as the sum of diffuse and specular colors
-    fragColor = aRandomColor * vec4(ambientColor + diffuse + specular, 1.0);
+    fragColor = baseColor * vec4(ambientColor + diffuse + specular, 1.0);
 }

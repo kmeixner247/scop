@@ -10,7 +10,8 @@ SRCS =	src/main.cpp \
 		src/objects/VertexBuffer.cpp \
 		src/objects/Camera.cpp \
 		src/objects/LightSource.cpp \
-		src/objects/WavefrontObject.cpp
+		src/objects/WavefrontObject.cpp \
+		src/parseBmp.cpp
 
 LIBS = libglfw3.a
 

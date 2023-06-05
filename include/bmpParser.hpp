@@ -6,9 +6,9 @@
 
 #pragma pack(1)
 struct s_pixel {
-    unsigned char b;
-    unsigned char g;
     unsigned char r;
+    unsigned char g;
+    unsigned char b;
 };
 
 struct bmp_header {
@@ -33,9 +33,9 @@ struct dib_header {
     unsigned int numImportantColors;
 };
 
-struct s_bmp {
+typedef struct s_bmp {
     struct bmp_header bmpHeader;
     struct dib_header dibHeader;
     std::vector<s_pixel> pixelData;
-};
+} t_bmp;
 #pragma pack()
