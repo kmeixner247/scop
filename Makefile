@@ -2,13 +2,12 @@ NAME = scop
 
 SRCS =	src/main.cpp \
 		src/objects/Shader.cpp \
-		src/objects/GLFW.cpp \
+		src/objects/Window.cpp \
 		src/objects/Scene.cpp \
 		src/objects/Material.cpp \
 		src/utils.cpp src/objects/VertexArray.cpp \
 		src/objects/WavefrontLoader.cpp \
 		src/objects/VertexBuffer.cpp \
-		src/objects/Camera.cpp \
 		src/objects/LightSource.cpp \
 		src/objects/WavefrontObject.cpp \
 		src/objects/Texture.cpp 

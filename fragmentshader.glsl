@@ -8,7 +8,6 @@ uniform vec3 diffuseColor;       // Diffuse color of the material
 uniform vec3 specularColor;   // Specular color of the material
 
 uniform vec3 lightPos;
-uniform vec3 viewPos;
 in vec3 FragPos;
 in vec2 TexCoord;
 in vec4 Normal;         // Normal vector of the fragment
@@ -39,14 +38,14 @@ void main()
     vec3 reflection = reflect(-lightDirection, normal);
     
     // Calculate the view direction (assuming camera at (0, 0, 0))
-    vec3 viewDirection = normalize(viewPos - gl_FragCoord.xyz);
+    vec3 viewDirection = normalize(-gl_FragCoord.xyz);
     
     // Calculate the specular factor based on the dot product of reflection and view direction
     float specularFactor = pow(max(dot(reflection, viewDirection), 0.0), 64.0);
     
     // Calculate the final specular color by multiplying the specular factor with the specular color
     vec3 specular = specularColor * specularFactor;
-    vec4 test = textureRandomRatio * aRandomColor + (1.0 - textureRandomRatio) * baseColor;
+    vec4 test = vec4(ambientColor, 1.0) * textureRandomRatio * aRandomColor + (1.0 - textureRandomRatio) * baseColor;
     // Set the fragment color as the sum of diffuse and specular colors
     fragColor = test * vec4(ambientColor + diffuse + specular, 1.0);
 }

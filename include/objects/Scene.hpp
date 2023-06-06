@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../math/math.hpp"
+
 #include "WavefrontLoader.hpp"
-#include "Camera.hpp"
 #include "LightSource.hpp"
 #include "Shader.hpp"
 #include <OpenGL/gl3.h>
@@ -11,15 +11,20 @@
 class Scene {
 private:
     LightSource _lightSource;
-    Camera _camera;
+    ft::mat4 _proj;
+    ft::mat4 _view;
     std::map<std::string, WavefrontObject> _objects;
     std::vector<Material> _v_mtllib;
+    float _ratio;
+	float _ratioChange;
+    void _updateRatio();
 public:
     Scene();
     Scene(Scene const &rhs);
     Scene &operator=(Scene const &rhs);
     ~Scene();
-    
+
+    void init(GLint const &width, GLint const &height);
     void setLightPos(ft::vec3 const &pos);
     ft::vec3 getLightPos() const;
     void setCameraPos(ft::vec3 const &pos);
@@ -31,6 +36,6 @@ public:
     void center();
     void scale(float const &factor);
     void scaleTo(float const &scale);
-    void draw(Shader const &shader) const;
+    void draw(Shader const &shader);
     void rotateObjects(float angle, int mode);
 };

@@ -2,9 +2,9 @@
 
 #include "../scop.hpp"
 #include "Scene.hpp"
-class GLFW {
+class Window {
 private:
-	typedef void (GLFW::*keyFunction)(Scene&);
+	typedef void (Window::*keyFunction)(Scene&);
 	const GLint _WIDTH;
 	const GLint _HEIGHT;
 	const GLfloat _SPEED;
@@ -29,12 +29,19 @@ private:
 	void keyL(Scene &scene) { scene.scale(0.95); }
 
 	void rotate(float angle, int mode);
+
+	Window() : _WIDTH(0), _HEIGHT(0), _SPEED(0) {}
+	Window(Window const &rhs) : _WIDTH(0), _HEIGHT(0), _SPEED(0) {}
+	Window &operator=(Window const &rhs) { return *this; }
 public:
-	GLFW(GLint WIDTH, GLint HEIGHT, GLfloat SPEED);
-	~GLFW() { glfwTerminate(); }
-	GLFWwindow *getWindow() { return this->_window; }
-	ft::mat4 getRot() { return this->_rot; }
-	float getMov(int ind) { return this->_mov[ind]; }
-	GLboolean shouldClose() { return glfwWindowShouldClose(this->_window); }
+	Window(GLint WIDTH, GLint HEIGHT, GLfloat SPEED);
+	~Window();
+	GLFWwindow *getWindow() const;
+	ft::mat4 getRot() const;
+	float getMov(int const &ind);
 	void processInput(Scene &scene);
+	GLboolean shouldClose();
+	GLint getWidth() const;
+	GLint getHeight() const;
+	void clear(ft::vec4 const &color);
 };
