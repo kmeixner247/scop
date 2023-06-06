@@ -35,8 +35,17 @@ int main() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, twidth, theight, 0, GL_RGB, GL_UNSIGNED_BYTE, tdata);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	// NEW TEXTURE BLOCK END
+	float textureRandomRatio = 0.0f;
+	float ratioChange = 0.01f;
+
 
     while (!GLFW.shouldClose()) {
+		if (textureRandomRatio >= 1)
+			ratioChange = -0.003f;
+		if (textureRandomRatio <= 0)
+			ratioChange = 0.003f;
+		textureRandomRatio += ratioChange;
+		shader.useValue("textureRandomRatio", textureRandomRatio);
         GLFW.processInput(myScene);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
