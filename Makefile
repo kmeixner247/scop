@@ -11,7 +11,7 @@ SRCS =	src/main.cpp \
 		src/objects/Camera.cpp \
 		src/objects/LightSource.cpp \
 		src/objects/WavefrontObject.cpp \
-		src/parseBmp.cpp
+		src/objects/Texture.cpp 
 
 LIBS = libglfw3.a
 

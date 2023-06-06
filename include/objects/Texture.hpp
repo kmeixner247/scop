@@ -1,5 +1,3 @@
-// bmpParser.hpp
-
 #pragma once
 
 #include <vector>
@@ -39,3 +37,18 @@ typedef struct s_bmp {
     std::vector<s_pixel> pixelData;
 } t_bmp;
 #pragma pack()
+
+class Texture {
+private:
+    unsigned int _id;
+    t_bmp _bmp;
+public:
+    Texture();
+    Texture(Texture const &rhs);
+    Texture(std::string const &path);
+    Texture &operator=(Texture const &rhs);
+    ~Texture();
+    void parseBmp(std::string const &path);
+    void bind();
+    void generate(std::string const &path);
+};
