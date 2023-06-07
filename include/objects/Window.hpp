@@ -27,6 +27,7 @@ private:
 	void keyI(Scene &scene) { scene.moveCamera(ft::vec3(0, 0, -this->_SPEED)); }
 	void keyK(Scene &scene) { scene.scale(1.05); }
 	void keyL(Scene &scene) { scene.scale(0.95); }
+	void keyTab(Scene &scene) { scene.transitionTexture(); }
 
 	void rotate(float angle, int mode);
 

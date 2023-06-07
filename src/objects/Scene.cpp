@@ -1,10 +1,12 @@
 #include "../../include/objects/Scene.hpp"
 
 void Scene::_updateRatio() {
-    if (_ratio >= 1)
-        _ratioChange = -0.003f;
-    if (_ratio <= 0)
-        _ratioChange = 0.003f;
+    if (_ratio >= 1) {
+        _ratio = 1.0f;
+    }
+    if (_ratio <= 0) {
+        _ratio = 0.0f;
+    }
     _ratio += _ratioChange;
 }
 
@@ -26,7 +28,7 @@ void Scene::init(GLint const &width, GLint const &height) {
     _view = ft::translate(ft::mat4(1.0f), ft::vec3(0,0,-3));
 	_proj = ft::perspective(ft::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
     _ratio = 0.0f;
-    _ratioChange = 0.003f;
+    _ratioChange = 0.0f;
 }
 
 void Scene::setLightPos(ft::vec3 const &pos) {
@@ -117,4 +119,11 @@ void Scene::rotateObjects(float angle, int mode) {
     for (auto it = _objects.begin(); it != _objects.end(); it++) {
         it->second.rotate(angle, mode);
     }
+}
+
+void Scene::transitionTexture() {
+    if (_ratio <= 0.0f)
+        _ratioChange = 0.03f;
+    else if (_ratio >= 1.0f)
+        _ratioChange = -0.03f;
 }

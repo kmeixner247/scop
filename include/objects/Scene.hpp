@@ -38,4 +38,5 @@ public:
     void scaleTo(float const &scale);
     void draw(Shader const &shader);
     void rotateObjects(float angle, int mode);
+    void transitionTexture();
 };

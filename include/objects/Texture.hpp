@@ -51,4 +51,5 @@ public:
     void parseBmp(std::string const &path);
     void bind();
     void generate(std::string const &path);
+    void printInfo() const;
 };
