@@ -5,16 +5,7 @@ The goal of this project is to interpret a wavefront .obj file and display the o
 This project is still under development. It is being written on macOS. Testing / compatibility for other systems has not yet been done.
 
 ## To Do
-- MaterialLoader class
-- Implement solutions when texture coords / normal vectors are not given
-  -  texture default mapping?
-- Optional:
-  - file browser
-  - sliders
-  - test linux compatibility
 - Features section in README.md
-- Fix Light
-- Texture/Random colors transition button
 
 ## Setup
 Clone the repository onto your system and run `make`. 
