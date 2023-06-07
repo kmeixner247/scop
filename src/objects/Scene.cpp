@@ -10,7 +10,7 @@ void Scene::_updateRatio() {
     _ratio += _ratioChange;
 }
 
-Scene::Scene() {
+Scene::Scene() : _activeShader(1), _ratio(0), _ratioChange(0) {
 }
 
 Scene::Scene(Scene const &rhs) {
@@ -27,8 +27,6 @@ void Scene::init(GLint const &width, GLint const &height) {
     glEnable(GL_DEPTH_TEST);
     _view = ft::translate(ft::mat4(1.0f), ft::vec3(0,0,-3));
 	_proj = ft::perspective(ft::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-    _ratio = 0.0f;
-    _ratioChange = 0.0f;
 }
 
 void Scene::setLightPos(ft::vec3 const &pos) {
@@ -96,20 +94,20 @@ void Scene::scaleTo(float const &scale) {
     }
 }
 
-void Scene::draw(Shader const &shader) {
-    shader.use();
-    shader.useValue("projMtx", _proj);
-    shader.useValue("viewMtx", _view);
-    shader.useValue("lightPos", _lightSource.getPos());
+void Scene::draw() {
+    _v_shaders[_activeShader].use();
+    _v_shaders[_activeShader].useValue("projMtx", _proj);
+    _v_shaders[_activeShader].useValue("viewMtx", _view);
+    _v_shaders[_activeShader].useValue("lightPos", _lightSource.getPos());
     _updateRatio();
-    shader.useValue("textureRandomRatio", _ratio);
+    _v_shaders[_activeShader].useValue("textureRandomRatio", _ratio);
     for (auto test1 : _objects) {
         for (auto it = _v_mtllib.begin(); it != _v_mtllib.end(); it++) {
             if (!it->getName().compare(test1.first)) {
-                shader.useMaterial(*it);
+                _v_shaders[_activeShader].useMaterial(*it);
             }
         }
-        shader.useValue("modelMtx", test1.second.getModel());
+        _v_shaders[_activeShader].useValue("modelMtx", test1.second.getModel());
         test1.second.draw();
     }
     glBindVertexArray(0);
@@ -126,4 +124,12 @@ void Scene::transitionTexture() {
         _ratioChange = 0.03f;
     else if (_ratio >= 1.0f)
         _ratioChange = -0.03f;
+}
+
+void Scene::addShader(Shader &shader) {
+    _v_shaders.push_back(shader);
+}
+
+void Scene::switchShader(int const &shaderIndex) {
+    _activeShader = shaderIndex;
 }

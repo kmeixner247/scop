@@ -34,6 +34,8 @@ Window::Window(GLint WIDTH, GLint HEIGHT, GLfloat SPEED) : _WIDTH(WIDTH), _HEIGH
 	_keyMap[GLFW_KEY_O] = &Window::keyO;
 	_keyMap[GLFW_KEY_K] = &Window::keyK;
 	_keyMap[GLFW_KEY_L] = &Window::keyL;
+	_keyMap[GLFW_KEY_1] = &Window::key1;
+	_keyMap[GLFW_KEY_2] = &Window::key2;
 	_keyMap[GLFW_KEY_TAB] = &Window::keyTab;
 	_mov[0] = 0;
 	_mov[1] = 0;

@@ -10,9 +10,12 @@ int main() {
 	Window Window(WIDTH, HEIGHT, MOV_SPEED);
 	WavefrontLoader temp("resources/textured_teapot.obj");
 	Texture texture("resources/bluetexture.bmp");
-	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
+	Shader simpleShader("simple_vertexshader.glsl", "simple_fragmentshader.glsl");
+	Shader lightingShader("lighting_vertexshader.glsl", "lighting_fragmentshader.glsl");
     Scene myScene;
-
+	myScene.addShader(simpleShader);
+	myScene.addShader(lightingShader);
+	Shader &shader = lightingShader;
 	myScene.init(WIDTH, HEIGHT);
 	myScene.setLightPos(ft::vec3(0.5, 0, 2));
 	myScene.loadObjects(temp);
@@ -25,7 +28,7 @@ int main() {
     while (!Window.shouldClose()) {
         Window.processInput(myScene);
 		Window.clear(ft::vec4(0.2f, 0.3f, 0.3f, 1.0f));
-        myScene.draw(shader);
+        myScene.draw();
 		glfwPollEvents();
 		glfwSwapBuffers(Window.getWindow());
     }

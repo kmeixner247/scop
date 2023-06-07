@@ -15,13 +15,15 @@ private:
     ft::mat4 _view;
     std::map<std::string, WavefrontObject> _objects;
     std::vector<Material> _v_mtllib;
+    std::vector<Shader> _v_shaders;
+    int _activeShader;
     float _ratio;
 	float _ratioChange;
     void _updateRatio();
-public:
-    Scene();
     Scene(Scene const &rhs);
     Scene &operator=(Scene const &rhs);
+public:
+    Scene();
     ~Scene();
 
     void init(GLint const &width, GLint const &height);
@@ -36,7 +38,9 @@ public:
     void center();
     void scale(float const &factor);
     void scaleTo(float const &scale);
-    void draw(Shader const &shader);
+    void draw();
     void rotateObjects(float angle, int mode);
     void transitionTexture();
+    void addShader(Shader &shader);
+    void switchShader(int const &shaderIndex);
 };
