@@ -109,6 +109,8 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
                 index += _v_normals.size();
             point.normal = _v_normals[index];
         }
+        else
+            point.normal = ft::vec3();
         temp.push_back(point);
     }
     _objects[_currentMaterial].add(temp[0]);

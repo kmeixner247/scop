@@ -8,22 +8,23 @@ const float MOV_SPEED = 0.05;
 
 int main() {
 	Window Window(WIDTH, HEIGHT, MOV_SPEED);
-	WavefrontLoader temp("resources/42_textured.obj");
+	WavefrontLoader temp("resources/42_no_texture.obj");
+	Texture grassTxt("resources/TallGreenGrass.bmp");
 	Shader shader("vertexshader.glsl", "fragmentshader.glsl");
     Scene myScene;
 
 	myScene.init(WIDTH, HEIGHT);
+	myScene.setLightPos(ft::vec3(1, 0, 1));
 	myScene.loadObjects(temp);
 	myScene.scaleTo(2);
 	myScene.loadMtllib(temp);
     myScene.bind();
 
-	Texture grassTxt("resources/TallGreenGrass.bmp");
+	grassTxt.bind();
 
     while (!Window.shouldClose()) {
         Window.processInput(myScene);
 		Window.clear(ft::vec4(0.2f, 0.3f, 0.3f, 1.0f));
-		grassTxt.bind();
         myScene.draw(shader);
 		glfwPollEvents();
 		glfwSwapBuffers(Window.getWindow());
