@@ -95,7 +95,6 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
 
         // vertex coordinate
         size_t index = convertToInt(element[0]) - 1;
-        std::cout << index << std::endl;
         if (index < 0)
             index += _v_vertices.size();
         if (index >= _v_vertices.size()) {

@@ -1,13 +1,13 @@
 #include "../../include/objects/Scene.hpp"
 
 void Scene::_updateRatio() {
+    _ratio += _ratioChange;
     if (_ratio >= 1) {
         _ratio = 1.0f;
     }
     if (_ratio <= 0) {
         _ratio = 0.0f;
     }
-    _ratio += _ratioChange;
 }
 
 Scene::Scene() : _activeShader(1), _ratio(0), _ratioChange(0) {
@@ -102,6 +102,7 @@ void Scene::draw() {
     _v_shaders[_activeShader].useValue("viewMtx", _view);
     _v_shaders[_activeShader].useValue("lightPos", _lightSource.getPos());
     _updateRatio();
+    std::cout << _ratio << std::endl;
     _v_shaders[_activeShader].useValue("textureRandomRatio", _ratio);
     for (auto test1 : _objects) {
         for (auto it = _v_mtllib.begin(); it != _v_mtllib.end(); it++) {
