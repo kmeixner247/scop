@@ -96,8 +96,8 @@ _illum(0) {
 Material::Material(Material const &rhs) : 
 _name(rhs._name),
 _ns(rhs._ns),
-_kd(rhs._kd),
 _ka(rhs._ka),
+_kd(rhs._kd),
 _ks(rhs._ks),
 _ke(rhs._ke),
 _ni(rhs._ni),
@@ -134,8 +134,4 @@ ft::vec3 Material::getKd() const {
 }
 ft::vec3 Material::getKs() const {
     return _ks;
-}
-
-void Material::use() const {
-    std::cout << "pls use me senpai" << std::endl;
 }

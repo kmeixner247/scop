@@ -6,6 +6,7 @@
 #include "../math/math.hpp"
 #include "fstream"
 #include "../scop.hpp"
+#include "../utils.hpp"
 #include "WavefrontObject.hpp"
 
 class Scene;
@@ -42,8 +43,11 @@ private:
     void _handleSmoothShading(std::string_view lineView);
     void _doMathStuff(std::vector<t_vbo_element> &lol);
     void _centerObjects();
-
+    WavefrontLoader() {}
+    WavefrontLoader(WavefrontLoader const &rhs) {(void)rhs; }
+    WavefrontLoader &operator=(WavefrontLoader const &rhs) { (void)rhs; return *this;}
 public:
     WavefrontLoader(std::string const &path);
+    ~WavefrontLoader();
     friend class Scene;
 };

@@ -1,6 +1,23 @@
 #include "../include/scop.hpp"
 #include <random>
 
+int convertToInt(std::string const &val) {
+    try {
+        return std::stoi(val);
+    }
+    catch (const std::exception &e) {
+        throw std::runtime_error("stoi: no valid conversion of '" + val + "'.");
+    }
+}
+float convertToFloat(std::string const &val) {
+    try {
+        return std::stod(val);
+    }
+    catch (const std::exception &e) {
+        throw std::runtime_error("stod: no valid conversion of '" + val + "'.");
+    }
+}
+
 std::vector<std::string> splitLineByCharacter(std::string_view lineView, char del) {
     std::vector<std::string> vals;
     size_t pos;
@@ -13,17 +30,26 @@ std::vector<std::string> splitLineByCharacter(std::string_view lineView, char de
 }
 ft::vec2 parseVec2(std::string_view const &lineView) {
     std::vector<std::string> vals = splitLineByCharacter(lineView, ' ');
-    return ft::vec2(std::stod(vals[0]), std::stod(vals[1]));
+    if (vals.size() != 2) {
+        throw std::runtime_error("parseVec2: invalid vector size.");
+    }
+    return ft::vec2(convertToFloat(vals[0]), convertToFloat(vals[1]));
 }
 
 ft::vec3 parseVec3(std::string_view const &lineView) {
     std::vector<std::string> vals = splitLineByCharacter(lineView, ' ');
-    return ft::vec3(std::stod(vals[0]), std::stod(vals[1]), std::stod(vals[2]));
+    if (vals.size() != 3) {
+        throw std::runtime_error("parseVec3: invalid vector size.");
+    }
+    return ft::vec3(convertToFloat(vals[0]), convertToFloat(vals[1]), convertToFloat(vals[2]));
 }
 
 ft::vec4 parseVec4(std::string_view const &lineView) {
     std::vector<std::string> vals = splitLineByCharacter(lineView, ' ');
-    return ft::vec4(std::stod(vals[0]), std::stod(vals[1]), std::stod(vals[2]), std::stod(vals[3]));
+    if (vals.size() != 4) {
+        throw std::runtime_error("parseVec4: invalid vector size.");
+    }
+    return ft::vec4(convertToFloat(vals[0]), convertToFloat(vals[1]), convertToFloat(vals[2]), convertToFloat(vals[3]));
 }
 
 bool lineStartsWith(std::string_view const &strView, const std::string prefix) {
@@ -40,13 +66,6 @@ void trimWhitespaceFrom(std::string_view &lineView) {
     auto endPos = lineView.find_last_not_of(" \t\n\v\f\r");
     if (endPos <= lineView.size())
         lineView.remove_suffix(lineView.size() - endPos - 1);
-}
-
-void readFileIntoString(std::string const &path, std::string &dest) {
-    std::stringstream ss;
-    std::ifstream file(path);
-    ss << file.rdbuf();
-    dest = ss.str();
 }
 
 float generateRandomNumber() {

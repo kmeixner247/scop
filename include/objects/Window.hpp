@@ -12,7 +12,7 @@ private:
 	ft::mat4 _rot;
 	float _mov[3];
 	std::map<int, keyFunction> _keyMap;
-	void keyESC(Scene &scene) { glfwSetWindowShouldClose(this->_window, true); }
+	void keyESC(Scene &scene) { (void)scene; glfwSetWindowShouldClose(this->_window, true); }
 	void keyUP(Scene &scene) { scene.rotateObjects(-2.0, 0); }
 	void keyDOWN(Scene &scene) { scene.rotateObjects(2.0, 0); }
 	void keyLEFT(Scene &scene) { scene.rotateObjects(2.0, 1); }
@@ -34,8 +34,8 @@ private:
 	void rotate(float angle, int mode);
 
 	Window() : _WIDTH(0), _HEIGHT(0), _SPEED(0) {}
-	Window(Window const &rhs) : _WIDTH(0), _HEIGHT(0), _SPEED(0) {}
-	Window &operator=(Window const &rhs) { return *this; }
+	Window(Window const &rhs) : _WIDTH(0), _HEIGHT(0), _SPEED(0) { *this = rhs; }
+	Window &operator=(Window const &rhs) { (void)rhs; return *this; }
 public:
 	Window(GLint WIDTH, GLint HEIGHT, GLfloat SPEED);
 	~Window();

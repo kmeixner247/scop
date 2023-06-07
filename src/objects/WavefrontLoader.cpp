@@ -1,9 +1,13 @@
 #include "../../include/objects/WavefrontLoader.hpp"
 #include <random>
+#include <stdexcept>
 
 void WavefrontLoader::_readFileIntoString(std::string const &path) {
     std::stringstream ss;
-    std::ifstream file(path);    
+    std::ifstream file(path);
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + path);
+    }
     ss << file.rdbuf();
     _src = ss.str();
 }
@@ -17,7 +21,11 @@ void WavefrontLoader::_interpretLine(std::string_view const &lineView) {
 
 std::vector<Material> WavefrontLoader::_parseMaterials(std::string const &src) {
     std::stringstream ss;
-    std::ifstream file ("resources/" + src);
+    std::string path = "resources/" + src;
+    std::ifstream file (path);
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + path);
+    }
     std::string line;
     std::vector<Material> mats;
     mats.push_back(Material());
@@ -79,24 +87,30 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
     point.randomColor.x = generateRandomNumber();
     point.randomColor.y = generateRandomNumber();
     point.randomColor.z = generateRandomNumber();
-    size_t index;
     std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
-    for (int i = 0; i < points.size(); i++) {
+    for (size_t i = 0; i < points.size(); i++) {
         std::vector<std::string> element = splitLineByCharacter(std::string_view(points[i]), '/');
         
         // TODO make nice
 
         // vertex coordinate
-        size_t index = std::stoi(element[0]) - 1;
+        size_t index = convertToInt(element[0]) - 1;
+        std::cout << index << std::endl;
         if (index < 0)
             index += _v_vertices.size();
+        if (index >= _v_vertices.size()) {
+            throw std::runtime_error("Invalid vertex index in .obj file.");
+        }
         point.vertex = _v_vertices[index];
 
         // texture coordinate
         if (element.size() > 1 && element[1].compare("")) {
-            index = std::stoi(element[1]) - 1;
+            index = convertToInt(element[1]) - 1;
             if (index < 0)
                 index += _v_texcoords.size();
+            if (index >= _v_texcoords.size()) {
+                throw std::runtime_error("Invalid texture coordinate index in .obj file.");
+            }
             point.texCoords = _v_texcoords[index];
         }
         else
@@ -104,14 +118,20 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
 
         // normal vector
         if (element.size() == 3) {
-            index = std::stoi(element[2]) - 1;
+            index = convertToInt(element[2]) - 1;
             if (index < 0)
                 index += _v_normals.size();
+            if (index >= _v_normals.size()) {
+                throw std::runtime_error("Invalid normal index in .obj file.");
+            }
             point.normal = _v_normals[index];
         }
         else
             point.normal = ft::vec3();
         temp.push_back(point);
+    }
+    if (temp.size() == 0) {
+        throw std::runtime_error("No valid faces in .obj file.");
     }
     _objects[_currentMaterial].add(temp[0]);
     _objects[_currentMaterial].add(temp[1]);
@@ -140,20 +160,27 @@ void WavefrontLoader::_initializeLineHandlerMap() {
 }
 
 WavefrontLoader::WavefrontLoader(std::string const &path) {
-    _readFileIntoString(path);
-    _initializeLineHandlerMap();
+    try {
+        _readFileIntoString(path);
+        _initializeLineHandlerMap();
 
-    std::istringstream srcStream(_src);
-    std::string line;
-    std::string_view lineView;
-    while (srcStream) {
-        getline(srcStream, line);
-        lineView = line;
-        cutCommentsFrom(lineView);
-        trimWhitespaceFrom(lineView);
-        _interpretLine(lineView);
+        std::istringstream srcStream(_src);
+        std::string line;
+        std::string_view lineView;
+        while (srcStream) {
+            getline(srcStream, line);
+            lineView = line;
+            cutCommentsFrom(lineView);
+            trimWhitespaceFrom(lineView);
+            _interpretLine(lineView);
+        }
+        _centerObjects();
     }
-    _centerObjects();
+    catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        this->~WavefrontLoader();
+        exit (-1);
+    }
 }
 
 void WavefrontLoader::_centerObjects() {
@@ -170,4 +197,7 @@ void WavefrontLoader::_centerObjects() {
     for (auto it = _objects.begin(); it != _objects.end(); it++) {
         it->second.move(center);
     }
+}
+
+WavefrontLoader::~WavefrontLoader() {
 }

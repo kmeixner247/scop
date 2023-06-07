@@ -70,7 +70,7 @@ void Texture::parseBmp(std::string const &path) {
     std::string str = ss.str();
     struct s_pixel pxl;
     const char *pixels = str.c_str();
-    for (int i = 0; i < str.size(); i += 3) {
+    for (size_t i = 0; i < str.size(); i += 3) {
         pxl.r = pixels[i];
         pxl.g = pixels[i+1];
         pxl.b = pixels[i+2];

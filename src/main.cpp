@@ -7,22 +7,21 @@ const float MOV_SPEED = 0.05;
 #include <iostream>
 
 int main() {
+	WavefrontLoader wavefrontData("resources/42_busted.obj");
 	Window Window(WIDTH, HEIGHT, MOV_SPEED);
-	WavefrontLoader temp("resources/textured_teapot.obj");
-	Texture texture("resources/bluetexture.bmp");
+	Texture texture("resources/Carbon_02.bmp");
 	Shader simpleShader("simple_vertexshader.glsl", "simple_fragmentshader.glsl");
 	Shader lightingShader("lighting_vertexshader.glsl", "lighting_fragmentshader.glsl");
     Scene myScene;
+
+	myScene.init(WIDTH, HEIGHT);
+	myScene.loadObjects(wavefrontData);
+	myScene.loadMtllib(wavefrontData);
 	myScene.addShader(simpleShader);
 	myScene.addShader(lightingShader);
-	Shader &shader = lightingShader;
-	myScene.init(WIDTH, HEIGHT);
 	myScene.setLightPos(ft::vec3(0.5, 0, 2));
-	myScene.loadObjects(temp);
 	myScene.scaleTo(2);
-	myScene.loadMtllib(temp);
     myScene.bind();
-
 	texture.bind();
 
     while (!Window.shouldClose()) {

@@ -17,6 +17,3 @@ typedef struct s_vbo_element {
     ft::vec3 normal;
     ft::vec3 randomColor;
 } t_vbo_element;
-
-
-struct s_bmp parseBmp(std::string const &path);

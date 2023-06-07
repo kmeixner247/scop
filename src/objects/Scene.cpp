@@ -14,9 +14,11 @@ Scene::Scene() : _activeShader(1), _ratio(0), _ratioChange(0) {
 }
 
 Scene::Scene(Scene const &rhs) {
+    *this = rhs;
 }
 
 Scene &Scene::operator=(Scene const &rhs) {
+    (void) rhs;
     return *this;
 }
 

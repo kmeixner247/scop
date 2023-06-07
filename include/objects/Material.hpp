@@ -41,5 +41,4 @@ public:
     ft::vec3 getKa() const;
     ft::vec3 getKd() const;
     ft::vec3 getKs() const;
-    void use() const;
 };
