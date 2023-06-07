@@ -26,6 +26,7 @@ int main() {
 	texture.bind();
 
     while (!Window.shouldClose()) {
+		glfwSwapInterval(1);
         Window.processInput(myScene);
 		Window.clear(ft::vec4(0.2f, 0.3f, 0.3f, 1.0f));
         myScene.draw();
