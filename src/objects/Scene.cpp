@@ -102,7 +102,6 @@ void Scene::draw() {
     _v_shaders[_activeShader].useValue("viewMtx", _view);
     _v_shaders[_activeShader].useValue("lightPos", _lightSource.getPos());
     _updateRatio();
-    std::cout << _ratio << std::endl;
     _v_shaders[_activeShader].useValue("textureRandomRatio", _ratio);
     for (auto test1 : _objects) {
         for (auto it = _v_mtllib.begin(); it != _v_mtllib.end(); it++) {

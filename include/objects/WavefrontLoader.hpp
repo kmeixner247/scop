@@ -28,7 +28,7 @@ private:
     std::string _currentMaterial;
 
 
-    std::vector<Material> _parseMaterials(std::string const &src);
+    void _parseMaterials(std::string const &src);
     void _readFileIntoString(std::string const &path);
     void _interpretLine(std::string_view const &lineView);
     void _initializeLineHandlerMap();

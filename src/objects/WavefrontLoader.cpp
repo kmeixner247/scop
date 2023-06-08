@@ -19,7 +19,7 @@ void WavefrontLoader::_interpretLine(std::string_view const &lineView) {
     }
 }
 
-std::vector<Material> WavefrontLoader::_parseMaterials(std::string const &src) {
+void WavefrontLoader::_parseMaterials(std::string const &src) {
     std::stringstream ss;
     std::string path = "resources/" + src;
     std::ifstream file (path);
@@ -27,8 +27,6 @@ std::vector<Material> WavefrontLoader::_parseMaterials(std::string const &src) {
         throw std::runtime_error("Failed to open file: " + path);
     }
     std::string line;
-    std::vector<Material> mats;
-    mats.push_back(Material());
     while (file && line.rfind("newmtl")) {
         getline(file, line);
     }
@@ -39,41 +37,47 @@ std::vector<Material> WavefrontLoader::_parseMaterials(std::string const &src) {
             getline(file, line);      
         } while (file && line.rfind("newmtl"));
         Material mat(ss.str());
-        mats.push_back(mat);
+        _v_mtllib.push_back(mat);
     }
-    return mats;
 }
 
 void WavefrontLoader::_handleMtllib(std::string_view lineView) {
-    lineView.remove_prefix(7);
-    _v_mtllib = _parseMaterials(std::string(lineView));
+    removePrefixFrom(lineView, 7);
+    _parseMaterials(std::string(lineView));
 }
 
 void WavefrontLoader::_handleVertex(std::string_view lineView) {
-    lineView.remove_prefix(2);
+    removePrefixFrom(lineView, 2);
     _v_vertices.push_back(parseVec3(std::string(lineView)));
 }
 
 void WavefrontLoader::_handleTextureCoordinate(std::string_view lineView) {
-    lineView.remove_prefix(3);
-    _v_texcoords.push_back(parseVec2(std::string(lineView)));
+    removePrefixFrom(lineView, 3);
+    try {
+        _v_texcoords.push_back(parseVec2(std::string(lineView)));
+    }
+    catch (std::exception const &e) {
+        ft::vec3 texCoord3D = parseVec3(std::string(lineView));
+        ft::vec2 texCoord2D(texCoord3D[0], texCoord3D[1]);
+        _v_texcoords.push_back(texCoord2D);
+    }
 }
 
 void WavefrontLoader::_handleNormalVector(std::string_view lineView) {
-    lineView.remove_prefix(3);
+    removePrefixFrom(lineView, 3);
     _v_normals.push_back(parseVec3(std::string(lineView)));
 }
 
 void WavefrontLoader::_handleObject(std::string_view lineView) {
-    lineView.remove_prefix(2);
+    removePrefixFrom(lineView, 2);
 }
 
 void WavefrontLoader::_handleGroup(std::string_view lineView) {
-    lineView.remove_prefix(2);
+    removePrefixFrom(lineView, 2);
 }
 
 void WavefrontLoader::_handleMaterial(std::string_view lineView) {
-    lineView.remove_prefix(7);
+    removePrefixFrom(lineView, 7);
     _currentMaterial = std::string(lineView);
     if (_objects.count(_currentMaterial) == 0) {
         _objects.insert(std::make_pair(_currentMaterial, WavefrontObject()));
@@ -81,7 +85,7 @@ void WavefrontLoader::_handleMaterial(std::string_view lineView) {
 }
 
 void WavefrontLoader::_handleFace(std::string_view lineView) {
-    lineView.remove_prefix(2);
+    removePrefixFrom(lineView, 2);
     std::vector<t_vbo_element> temp;
     t_vbo_element point;
     point.randomColor.x = generateRandomNumber();
@@ -132,6 +136,11 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
     if (temp.size() == 0) {
         throw std::runtime_error("No valid faces in .obj file.");
     }
+    if (temp[0].normal.x == 0 && temp[0].normal.y == 0 && temp[0].normal.z == 0) {
+        ft::vec3 normal = ft::normalize(ft::crossproduct(temp[1].vertex - temp[0].vertex, temp[2].vertex - temp[1].vertex));
+        for (size_t i = 0; i < temp.size(); i++)
+            temp[i].normal = normal;
+    }
     _objects[_currentMaterial].add(temp[0]);
     _objects[_currentMaterial].add(temp[1]);
     _objects[_currentMaterial].add(temp[2]);
@@ -143,7 +152,7 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
 }
 
 void WavefrontLoader::_handleSmoothShading(std::string_view lineView) {
-    lineView.remove_prefix(2);
+    removePrefixFrom(lineView, 2);
 }
 
 void WavefrontLoader::_initializeLineHandlerMap() {
@@ -158,11 +167,12 @@ void WavefrontLoader::_initializeLineHandlerMap() {
     _lineHandlerMap["s "] = &WavefrontLoader::_handleSmoothShading;
 }
 
-WavefrontLoader::WavefrontLoader(std::string const &path) {
+WavefrontLoader::WavefrontLoader(std::string const &path) : _currentMaterial("None") {
     try {
         _readFileIntoString(path);
         _initializeLineHandlerMap();
 
+        _v_mtllib.push_back(Material());
         std::istringstream srcStream(_src);
         std::string line;
         std::string_view lineView;
