@@ -62,6 +62,12 @@ void cutCommentsFrom(std::string_view &lineView) {
         lineView.remove_suffix(lineView.size() - commentPos);
 }
 
+void removePrefixFrom(std::string_view &lineView, size_t n) {
+    lineView.remove_prefix(n);
+    size_t pos = lineView.find_first_not_of(" \t\n\v\f\r");
+    lineView.remove_prefix(pos);
+}
+
 void trimWhitespaceFrom(std::string_view &lineView) {
     auto endPos = lineView.find_last_not_of(" \t\n\v\f\r");
     if (endPos <= lineView.size())
