@@ -27,7 +27,7 @@ private:
     std::vector<Material> _v_mtllib;
     std::string _currentMaterial;
 
-
+    std::vector<ft::vec2> _rotateTriangleToXYPlane(std::vector<ft::vec3> triangle);
     void _parseMaterials(std::string const &src);
     void _readFileIntoString(std::string const &path);
     void _interpretLine(std::string_view const &lineView);

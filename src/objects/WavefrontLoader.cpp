@@ -2,6 +2,33 @@
 #include <random>
 #include <stdexcept>
 
+//  REFACTOR!!!
+std::vector<ft::vec2> WavefrontLoader::_rotateTriangleToXYPlane(std::vector<ft::vec3> triangle) {
+    std::vector<ft::vec2> texCoords;
+    ft::vec3 delta(triangle[0]);
+    for (auto it = triangle.begin(); it != triangle.end(); it++) {
+        *it -= delta;
+    }
+    ft::vec3 normal = ft::normalize(ft::crossproduct(triangle[1] - triangle[0], triangle[2] - triangle[0]));
+    if (normal.z == 1 || normal.z == -1)
+    {
+        for (auto it = triangle.begin(); it != triangle.end(); it++) {
+            texCoords.push_back(ft::vec2(it->x, it->y));
+        }
+        return texCoords;
+    }
+    ft::vec3 rotAxis = ft::normalize(ft::crossproduct(normal, ft::vec3(0, 0, 1)));
+    ft::mat4 rotMtx;
+    float rotAngle = std::acos(normal.dotproduct(ft::vec3(0,0,1)));
+    rotMtx = ft::rotate(rotMtx, -rotAngle, rotAxis);
+    ft::vec4 temp;
+    for (auto it = triangle.begin(); it != triangle.end(); it++) {
+        temp = rotMtx * ft::vec4(it->x, it->y, it->z, 1.0);
+        texCoords.push_back(ft::vec2(temp.x, temp.y));
+    }
+    return texCoords;
+}
+
 void WavefrontLoader::_readFileIntoString(std::string const &path) {
     std::stringstream ss;
     std::ifstream file(path);
@@ -83,7 +110,7 @@ void WavefrontLoader::_handleMaterial(std::string_view lineView) {
         _objects.insert(std::make_pair(_currentMaterial, WavefrontObject()));
     }
 }
-
+//  REFACTOR!!
 void WavefrontLoader::_handleFace(std::string_view lineView) {
     removePrefixFrom(lineView, 2);
     std::vector<t_vbo_element> temp;
@@ -94,8 +121,6 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
     std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
     for (size_t i = 0; i < points.size(); i++) {
         std::vector<std::string> element = splitLineByCharacter(std::string_view(points[i]), '/');
-        
-        // TODO make nice
 
         // vertex coordinate
         size_t index = convertToInt(element[0]) - 1;
@@ -117,7 +142,7 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
             point.texCoords = _v_texcoords[index];
         }
         else
-            point.texCoords = ft::vec2();
+            point.texCoords = ft::vec2(-1);
 
         // normal vector
         if (element.size() == 3) {
@@ -140,6 +165,27 @@ void WavefrontLoader::_handleFace(std::string_view lineView) {
         ft::vec3 normal = ft::normalize(ft::crossproduct(temp[1].vertex - temp[0].vertex, temp[2].vertex - temp[1].vertex));
         for (size_t i = 0; i < temp.size(); i++)
             temp[i].normal = normal;
+    }
+    if (temp[0].texCoords.x == -1) {
+        std::vector<ft::vec3> tempverts;
+        tempverts.push_back(temp[0].vertex);
+        tempverts.push_back(temp[1].vertex);
+        tempverts.push_back(temp[2].vertex);
+        std::vector<ft::vec2> texCoords = _rotateTriangleToXYPlane(tempverts);
+        temp[0].texCoords = texCoords[0];
+        temp[1].texCoords = texCoords[1];
+        temp[2].texCoords = texCoords[2];
+        for (size_t i = 2; i < temp.size(); i++) {
+            tempverts.clear();
+            tempverts.push_back(temp[0].vertex);
+            tempverts.push_back(temp[i - 1].vertex);
+            tempverts.push_back(temp[i].vertex);
+            texCoords.clear();
+            texCoords = _rotateTriangleToXYPlane(tempverts);
+            temp[0].texCoords = texCoords[0];
+            temp[i - 1].texCoords = texCoords[1];
+            temp[i].texCoords = texCoords[2];
+        }
     }
     _objects[_currentMaterial].add(temp[0]);
     _objects[_currentMaterial].add(temp[1]);
