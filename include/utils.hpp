@@ -11,5 +11,6 @@ void trimWhitespaceFrom(std::string_view &lineView);
 void removePrefixFrom(std::string_view &lineView, size_t n);
 std::vector<std::string> splitLineByCharacter(std::string_view lineView, char del);
 float generateRandomNumber();
+ft::vec3 generateRandomColor();
 int convertToInt(std::string const &val);
 float convertToFloat(std::string const &val);

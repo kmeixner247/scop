@@ -80,3 +80,11 @@ float generateRandomNumber() {
     std::uniform_real_distribution<float> dis(0.0f, 1.0f);
     return dis(gen);
 }
+
+ft::vec3 generateRandomColor() {
+    ft::vec3 color;
+    color.x = generateRandomNumber();
+    color.y = generateRandomNumber();
+    color.z = generateRandomNumber();
+    return color;
+}

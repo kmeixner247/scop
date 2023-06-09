@@ -110,91 +110,127 @@ void WavefrontLoader::_handleMaterial(std::string_view lineView) {
         _objects.insert(std::make_pair(_currentMaterial, WavefrontObject()));
     }
 }
-//  REFACTOR!!
+
+ft::vec3 WavefrontLoader::_findVertexCoordinate(std::string const &e) {
+    size_t index = convertToInt(e) - 1;
+    if (index >= _v_vertices.size()) {
+        throw std::runtime_error("Invalid vertex index in .obj file.");
+    }
+    if (index < 0) {
+        index += _v_vertices.size();
+    }
+    return _v_vertices[index];
+}
+
+ft::vec2 WavefrontLoader::_findTextureCoordinate(std::vector<std::string> const &e) {
+    if (e.size() < 2 || e[1].compare("")) {
+        return ft::vec2(-1);
+    }
+    size_t index = convertToInt(e[1]) -1;
+    if (index >= _v_texcoords.size()) {
+        throw std::runtime_error("Invalid texture coordinate index in .obj file.");
+    }
+    if (index < 0) {
+        index += _v_texcoords.size();
+    }
+    return _v_texcoords[index];
+}
+
+ft::vec3 WavefrontLoader::_findSurfaceNormal(std::vector<std::string> const &e) {
+    if (e.size() != 3) {
+        return ft::vec3();
+    }
+    size_t index = convertToInt(e[2]) - 1;
+    if (index >= _v_normals.size()) {
+        throw std::runtime_error("Invalid normal index in .obj file.");
+    }
+    if (index < 0) {
+        index += _v_normals.size();
+    }
+    return _v_normals[index];
+}
+
+bool WavefrontLoader::_surfaceNormalIsZero(std::vector<t_vbo_element> const &points) {
+    for (auto point : points) {
+        if (point.normal.x + point.normal.y + point.normal.z == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void WavefrontLoader::_calculateSurfaceNormals(std::vector<t_vbo_element> &points) {
+        ft::vec3 normal = ft::normalize(ft::crossproduct(points[1].vertex - points[0].vertex, points[2].vertex - points[1].vertex));
+        for (size_t i = 0; i < points.size(); i++)
+            points[i].normal = normal;
+}
+
+bool WavefrontLoader::_textureCoordinateIsZero(std::vector<t_vbo_element> const &points) {
+    for (auto point : points) {
+        if (point.texCoords.x == -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void WavefrontLoader::_calculateTextureCoordinates(std::vector<t_vbo_element> &points) {
+    std::vector<ft::vec3> tempverts;
+    tempverts.push_back(points[0].vertex);
+    tempverts.push_back(points[1].vertex);
+    tempverts.push_back(points[2].vertex);
+    std::vector<ft::vec2> texCoords = _rotateTriangleToXYPlane(tempverts);
+    points[0].texCoords = texCoords[0];
+    points[1].texCoords = texCoords[1];
+    points[2].texCoords = texCoords[2];
+    for (size_t i = 2; i < points.size(); i++) {
+        tempverts.clear();
+        tempverts.push_back(points[0].vertex);
+        tempverts.push_back(points[i - 1].vertex);
+        tempverts.push_back(points[i].vertex);
+        texCoords.clear();
+        texCoords = _rotateTriangleToXYPlane(tempverts);
+        points[0].texCoords = texCoords[0];
+        points[i - 1].texCoords = texCoords[1];
+        points[i].texCoords = texCoords[2];
+    }
+}
+
+void WavefrontLoader::_addFacesToObject(std::vector<t_vbo_element> const &points) {
+    _objects[_currentMaterial].add(points[0]);
+    _objects[_currentMaterial].add(points[1]);
+    _objects[_currentMaterial].add(points[2]);
+    for (size_t i = 2; i < points.size(); i++) {
+        _objects[_currentMaterial].add(points[0]);
+        _objects[_currentMaterial].add(points[i - 1]);
+        _objects[_currentMaterial].add(points[i]);
+    }
+}
+
 void WavefrontLoader::_handleFace(std::string_view lineView) {
     removePrefixFrom(lineView, 2);
-    std::vector<t_vbo_element> temp;
     t_vbo_element point;
-    point.randomColor.x = generateRandomNumber();
-    point.randomColor.y = generateRandomNumber();
-    point.randomColor.z = generateRandomNumber();
-    std::vector<std::string> points = splitLineByCharacter(lineView, ' ');
-    for (size_t i = 0; i < points.size(); i++) {
-        std::vector<std::string> element = splitLineByCharacter(std::string_view(points[i]), '/');
+    std::vector<t_vbo_element> points;
 
-        // vertex coordinate
-        size_t index = convertToInt(element[0]) - 1;
-        if (index < 0)
-            index += _v_vertices.size();
-        if (index >= _v_vertices.size()) {
-            throw std::runtime_error("Invalid vertex index in .obj file.");
-        }
-        point.vertex = _v_vertices[index];
-
-        // texture coordinate
-        if (element.size() > 1 && element[1].compare("")) {
-            index = convertToInt(element[1]) - 1;
-            if (index < 0)
-                index += _v_texcoords.size();
-            if (index >= _v_texcoords.size()) {
-                throw std::runtime_error("Invalid texture coordinate index in .obj file.");
-            }
-            point.texCoords = _v_texcoords[index];
-        }
-        else
-            point.texCoords = ft::vec2(-1);
-
-        // normal vector
-        if (element.size() == 3) {
-            index = convertToInt(element[2]) - 1;
-            if (index < 0)
-                index += _v_normals.size();
-            if (index >= _v_normals.size()) {
-                throw std::runtime_error("Invalid normal index in .obj file.");
-            }
-            point.normal = _v_normals[index];
-        }
-        else
-            point.normal = ft::vec3();
-        temp.push_back(point);
+    point.randomColor = generateRandomColor();
+    std::vector<std::string> pointStrings = splitLineByCharacter(lineView, ' ');
+    for (size_t i = 0; i < pointStrings.size(); i++) {
+        std::vector<std::string> element = splitLineByCharacter(std::string_view(pointStrings[i]), '/');
+        point.vertex = _findVertexCoordinate(element[0]);
+        point.texCoords = _findTextureCoordinate(element);
+        point.normal = _findSurfaceNormal(element);
+        points.push_back(point);
     }
-    if (temp.size() == 0) {
+    if (points.size() == 0) {
         throw std::runtime_error("No valid faces in .obj file.");
     }
-    if (temp[0].normal.x == 0 && temp[0].normal.y == 0 && temp[0].normal.z == 0) {
-        ft::vec3 normal = ft::normalize(ft::crossproduct(temp[1].vertex - temp[0].vertex, temp[2].vertex - temp[1].vertex));
-        for (size_t i = 0; i < temp.size(); i++)
-            temp[i].normal = normal;
+    if (_surfaceNormalIsZero(points)) {
+        _calculateSurfaceNormals(points);
     }
-    if (temp[0].texCoords.x == -1) {
-        std::vector<ft::vec3> tempverts;
-        tempverts.push_back(temp[0].vertex);
-        tempverts.push_back(temp[1].vertex);
-        tempverts.push_back(temp[2].vertex);
-        std::vector<ft::vec2> texCoords = _rotateTriangleToXYPlane(tempverts);
-        temp[0].texCoords = texCoords[0];
-        temp[1].texCoords = texCoords[1];
-        temp[2].texCoords = texCoords[2];
-        for (size_t i = 2; i < temp.size(); i++) {
-            tempverts.clear();
-            tempverts.push_back(temp[0].vertex);
-            tempverts.push_back(temp[i - 1].vertex);
-            tempverts.push_back(temp[i].vertex);
-            texCoords.clear();
-            texCoords = _rotateTriangleToXYPlane(tempverts);
-            temp[0].texCoords = texCoords[0];
-            temp[i - 1].texCoords = texCoords[1];
-            temp[i].texCoords = texCoords[2];
-        }
+    if (_textureCoordinateIsZero(points)) {
+        _calculateTextureCoordinates(points);
     }
-    _objects[_currentMaterial].add(temp[0]);
-    _objects[_currentMaterial].add(temp[1]);
-    _objects[_currentMaterial].add(temp[2]);
-    for (size_t i = 2; i < temp.size(); i++) {
-        _objects[_currentMaterial].add(temp[0]);
-        _objects[_currentMaterial].add(temp[i - 1]);
-        _objects[_currentMaterial].add(temp[i]);
-    }
+    _addFacesToObject(points);
 }
 
 void WavefrontLoader::_handleSmoothShading(std::string_view lineView) {

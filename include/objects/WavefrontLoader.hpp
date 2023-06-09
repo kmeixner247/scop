@@ -28,6 +28,14 @@ private:
     std::string _currentMaterial;
 
     std::vector<ft::vec2> _rotateTriangleToXYPlane(std::vector<ft::vec3> triangle);
+    ft::vec3 _findVertexCoordinate(std::string const &e);
+    ft::vec2 _findTextureCoordinate(std::vector<std::string> const &e);
+    ft::vec3 _findSurfaceNormal(std::vector<std::string> const &e);
+    bool _surfaceNormalIsZero(std::vector<t_vbo_element> const &points);
+    void _calculateSurfaceNormals(std::vector<t_vbo_element> &points);
+    bool _textureCoordinateIsZero(std::vector<t_vbo_element> const &points);
+    void _calculateTextureCoordinates(std::vector<t_vbo_element> &points);
+    void _addFacesToObject(std::vector<t_vbo_element> const &points);
     void _parseMaterials(std::string const &src);
     void _readFileIntoString(std::string const &path);
     void _interpretLine(std::string_view const &lineView);
