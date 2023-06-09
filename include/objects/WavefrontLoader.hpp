@@ -5,10 +5,9 @@
 #include "Material.hpp"
 #include "../math/math.hpp"
 #include "fstream"
-#include "../scop.hpp"
+
 #include "../utils.hpp"
 #include "WavefrontObject.hpp"
-#include <random>
 #include <stdexcept>
 
 class Scene;

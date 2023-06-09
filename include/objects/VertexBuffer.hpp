@@ -1,7 +1,8 @@
 #pragma once
+
 #include <OpenGL/gl3.h>
 #include <vector>
-#include "../scop.hpp"
+#include "vbo_element.hpp"
 
 class VertexBuffer {
 private:

@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../scop.hpp"
+#include "../../external/glfw3.h"
+
 #include "Scene.hpp"
+
 class Window {
 private:
 	typedef void (Window::*keyFunction)(Scene&);

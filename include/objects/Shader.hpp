@@ -1,10 +1,14 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
-#include <iostream>
-#include <sstream>
+
+
 #include "Material.hpp"
-#include "../scop.hpp"
 #include "../math/math.hpp"
+#include <OpenGL/gl3.h>
+
+
+#include <fstream>
+
 class Shader {
 private:
 	unsigned int _id;

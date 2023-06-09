@@ -1,9 +1,8 @@
 #pragma once
-#include <iostream>
+
 #include <sstream>
 #include <map>
-#include <vector>
-#include "../math/vec3.hpp"
+#include "../math/math.hpp"
 #include "../utils.hpp"
 class Material {
 private:

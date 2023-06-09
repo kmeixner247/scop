@@ -1,6 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <OpenGL/gl3.h>
+
+#include <fstream>
+#include <sstream>
 
 #pragma pack(1)
 struct s_pixel {
@@ -51,5 +55,4 @@ public:
     void parseBmp(std::string const &path);
     void bind();
     void generate(std::string const &path);
-    void printInfo() const;
 };

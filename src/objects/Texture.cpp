@@ -1,9 +1,5 @@
 #include "../../include/objects/Texture.hpp"
-#include <OpenGL/gl3.h>
 
-#include <fstream>
-#include <sstream>
-#include <iostream>
 Texture::Texture() {
 }
 Texture::Texture(Texture const &rhs) {
@@ -11,26 +7,6 @@ Texture::Texture(Texture const &rhs) {
 }
 Texture::Texture(std::string const &path) {
     generate(path);
-}
-
-void Texture::printInfo() const {
-    std::cout << "signature: " << _bmp.bmpHeader.signature[0] <<_bmp.bmpHeader.signature[1] << std::endl;
-    std::cout << "fileSize: " << _bmp.bmpHeader.fileSize << std::endl;
-    std::cout << "reserved1: " << _bmp.bmpHeader.reserved1 << std::endl;
-    std::cout << "reserved2: " << _bmp.bmpHeader.reserved2 << std::endl;
-    std::cout << "offset: " << _bmp.bmpHeader.offset << std::endl;
-
-    std::cout << "headerSize: " << _bmp.dibHeader.headerSize << std::endl;
-    std::cout << "width: " << _bmp.dibHeader.width << std::endl;
-    std::cout << "height: " << _bmp.dibHeader.height << std::endl;
-    std::cout << "colorPlanes: " << _bmp.dibHeader.colorPlanes << std::endl;
-    std::cout << "bitsPerPixel: " << _bmp.dibHeader.bitsPerPixel << std::endl;
-    std::cout << "compressionMethod: " << _bmp.dibHeader.compressionMethod << std::endl;
-    std::cout << "imageSize: " << _bmp.dibHeader.imageSize << std::endl;
-    std::cout << "horizontalResolution: " << _bmp.dibHeader.horizontalResolution << std::endl;
-    std::cout << "verticalResolution: " << _bmp.dibHeader.verticalResolution << std::endl;
-    std::cout << "numColors: " << _bmp.dibHeader.numColors << std::endl;
-    std::cout << "numImportantColors: " << _bmp.dibHeader.numImportantColors << std::endl;
 }
 
 Texture &Texture::operator=(Texture const &rhs) {

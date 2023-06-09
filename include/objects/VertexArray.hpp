@@ -1,6 +1,5 @@
 #pragma once
 
-#include "VertexBuffer.hpp"
 #include <OpenGL/gl3.h>
 
 class VertexArray {

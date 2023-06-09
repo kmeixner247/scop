@@ -1,4 +1,4 @@
-#include "../include/scop.hpp"
+#include "../include/math/math.hpp"
 #include <random>
 
 int convertToInt(std::string const &val) {

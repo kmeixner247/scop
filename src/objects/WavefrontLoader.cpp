@@ -6,6 +6,12 @@ std::vector<ft::vec2> WavefrontLoader::_rotateTriangleToXYPlane(std::vector<ft::
     for (auto it = triangle.begin(); it != triangle.end(); it++) {
         *it -= delta;
     }
+    if (triangle[0] == triangle[1] || triangle[0] == triangle[2] || triangle[1] == triangle[2]) {
+        for (size_t n = 0; n < triangle.size(); n++) {
+            texCoords.push_back(ft::vec2());
+        }
+        return texCoords;
+    }
     ft::vec3 normal = ft::normalize(ft::crossproduct(triangle[1] - triangle[0], triangle[2] - triangle[0]));
     if (normal.z == 1 || normal.z == -1)
     {
@@ -109,12 +115,14 @@ void WavefrontLoader::_handleMaterial(std::string_view lineView) {
 }
 
 ft::vec3 WavefrontLoader::_findVertexCoordinate(std::string const &e) {
-    size_t index = convertToInt(e) - 1;
-    if (index >= _v_vertices.size()) {
-        throw std::runtime_error("Invalid vertex index in .obj file.");
-    }
+    int index = convertToInt(e) - 1;
     if (index < 0) {
-        index += _v_vertices.size();
+        index += _v_vertices.size() + 1;
+    }
+    if ((size_t)index >= _v_vertices.size()) {
+        std::cout << e << std::endl;
+        std::cout << index << std::endl;
+        throw std::runtime_error("Invalid vertex index in .obj file.");
     }
     return _v_vertices[index];
 }
@@ -123,12 +131,12 @@ ft::vec2 WavefrontLoader::_findTextureCoordinate(std::vector<std::string> const 
     if (e.size() < 2 || !e[1].compare("")) {
         return ft::vec2(-1);
     }
-    size_t index = convertToInt(e[1]) - 1;
-    if (index >= _v_texcoords.size()) {
-        throw std::runtime_error("Invalid texture coordinate index in .obj file.");
-    }
+    int index = convertToInt(e[1]) - 1;
     if (index < 0) {
-        index += _v_texcoords.size();
+        index += _v_texcoords.size() + 1;
+    }
+    if ((size_t)index >= _v_texcoords.size()) {
+        throw std::runtime_error("Invalid texture coordinate index in .obj file.");
     }
     return _v_texcoords[index];
 }
@@ -137,12 +145,12 @@ ft::vec3 WavefrontLoader::_findSurfaceNormal(std::vector<std::string> const &e) 
     if (e.size() != 3) {
         return ft::vec3();
     }
-    size_t index = convertToInt(e[2]) - 1;
-    if (index >= _v_normals.size()) {
-        throw std::runtime_error("Invalid normal index in .obj file.");
-    }
+    int index = convertToInt(e[2]) - 1;
     if (index < 0) {
-        index += _v_normals.size();
+        index += _v_normals.size() + 1;
+    }
+    if ((size_t)index >= _v_normals.size()) {
+        throw std::runtime_error("Invalid normal index in .obj file.");
     }
     return _v_normals[index];
 }
