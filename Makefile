@@ -16,7 +16,7 @@ LIBS = libglfw3.a
 
 CC = c++
 
-CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1 -Wno-c++11-extensions -g -fsanitize=address -Wall -Werror -Wextra
+CFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -D GL_SILENCE_DEPRECATION=1 -Wno-c++11-extensions -g -fsanitize=address -Wall -Werror -Wextra -D__gl_h_ -DGL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 
 all: $(NAME)
 
