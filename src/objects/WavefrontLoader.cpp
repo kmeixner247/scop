@@ -1,8 +1,5 @@
 #include "../../include/objects/WavefrontLoader.hpp"
-#include <random>
-#include <stdexcept>
 
-//  REFACTOR!!!
 std::vector<ft::vec2> WavefrontLoader::_rotateTriangleToXYPlane(std::vector<ft::vec3> triangle) {
     std::vector<ft::vec2> texCoords;
     ft::vec3 delta(triangle[0]);
@@ -174,25 +171,25 @@ bool WavefrontLoader::_textureCoordinateIsZero(std::vector<t_vbo_element> const 
     return false;
 }
 
-void WavefrontLoader::_calculateTextureCoordinates(std::vector<t_vbo_element> &points) {
-    std::vector<ft::vec3> tempverts;
-    tempverts.push_back(points[0].vertex);
-    tempverts.push_back(points[1].vertex);
-    tempverts.push_back(points[2].vertex);
-    std::vector<ft::vec2> texCoords = _rotateTriangleToXYPlane(tempverts);
-    points[0].texCoords = texCoords[0];
-    points[1].texCoords = texCoords[1];
-    points[2].texCoords = texCoords[2];
-    for (size_t i = 2; i < points.size(); i++) {
-        tempverts.clear();
-        tempverts.push_back(points[0].vertex);
-        tempverts.push_back(points[i - 1].vertex);
-        tempverts.push_back(points[i].vertex);
+void WavefrontLoader::_calculateTextureCoordinates(std::vector<t_vbo_element> &vertexData) {
+    std::vector<ft::vec3> point;
+    point.push_back(vertexData[0].vertex);
+    point.push_back(vertexData[1].vertex);
+    point.push_back(vertexData[2].vertex);
+    std::vector<ft::vec2> texCoords = _rotateTriangleToXYPlane(point);
+    vertexData[0].texCoords = texCoords[0];
+    vertexData[1].texCoords = texCoords[1];
+    vertexData[2].texCoords = texCoords[2];
+    for (size_t i = 2; i < vertexData.size(); i++) {
+        point.clear();
+        point.push_back(vertexData[0].vertex);
+        point.push_back(vertexData[i - 1].vertex);
+        point.push_back(vertexData[i].vertex);
         texCoords.clear();
-        texCoords = _rotateTriangleToXYPlane(tempverts);
-        points[0].texCoords = texCoords[0];
-        points[i - 1].texCoords = texCoords[1];
-        points[i].texCoords = texCoords[2];
+        texCoords = _rotateTriangleToXYPlane(point);
+        vertexData[0].texCoords = texCoords[0];
+        vertexData[i - 1].texCoords = texCoords[1];
+        vertexData[i].texCoords = texCoords[2];
     }
 }
 
@@ -207,20 +204,24 @@ void WavefrontLoader::_addFacesToObject(std::vector<t_vbo_element> const &points
     }
 }
 
+std::vector<t_vbo_element> WavefrontLoader::_createPoints(std::string_view lineView) {
+    std::vector<t_vbo_element> points;
+    t_vbo_element vertexData;
+    vertexData.randomColor = generateRandomColor();
+    std::vector<std::string> rawVertexData = splitLineByCharacter(lineView, ' ');
+    for (size_t i = 0; i < rawVertexData.size(); i++) {
+        std::vector<std::string> indices = splitLineByCharacter(std::string_view(rawVertexData[i]), '/');
+        vertexData.vertex = _findVertexCoordinate(indices[0]);
+        vertexData.texCoords = _findTextureCoordinate(indices);
+        vertexData.normal = _findSurfaceNormal(indices);
+        points.push_back(vertexData);
+    }
+    return points;
+}
+
 void WavefrontLoader::_handleFace(std::string_view lineView) {
     removePrefixFrom(lineView, 2);
-    t_vbo_element point;
-    std::vector<t_vbo_element> points;
-
-    point.randomColor = generateRandomColor();
-    std::vector<std::string> pointStrings = splitLineByCharacter(lineView, ' ');
-    for (size_t i = 0; i < pointStrings.size(); i++) {
-        std::vector<std::string> element = splitLineByCharacter(std::string_view(pointStrings[i]), '/');
-        point.vertex = _findVertexCoordinate(element[0]);
-        point.texCoords = _findTextureCoordinate(element);
-        point.normal = _findSurfaceNormal(element);
-        points.push_back(point);
-    }
+    std::vector<t_vbo_element> points = _createPoints(lineView);
     if (points.size() == 0) {
         throw std::runtime_error("No valid faces in .obj file.");
     }

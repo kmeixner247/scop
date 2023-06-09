@@ -8,6 +8,8 @@
 #include "../scop.hpp"
 #include "../utils.hpp"
 #include "WavefrontObject.hpp"
+#include <random>
+#include <stdexcept>
 
 class Scene;
 
@@ -28,6 +30,7 @@ private:
     std::string _currentMaterial;
 
     std::vector<ft::vec2> _rotateTriangleToXYPlane(std::vector<ft::vec3> triangle);
+    std::vector<t_vbo_element> _createPoints(std::string_view lineView);
     ft::vec3 _findVertexCoordinate(std::string const &e);
     ft::vec2 _findTextureCoordinate(std::vector<std::string> const &e);
     ft::vec3 _findSurfaceNormal(std::vector<std::string> const &e);
@@ -49,7 +52,6 @@ private:
     void _handleMaterial(std::string_view lineView);
     void _handleFace(std::string_view lineView);
     void _handleSmoothShading(std::string_view lineView);
-    void _doMathStuff(std::vector<t_vbo_element> &lol);
     void _centerObjects();
     WavefrontLoader() {}
     WavefrontLoader(WavefrontLoader const &rhs) {(void)rhs; }
