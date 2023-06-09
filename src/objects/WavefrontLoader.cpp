@@ -120,10 +120,10 @@ ft::vec3 WavefrontLoader::_findVertexCoordinate(std::string const &e) {
 }
 
 ft::vec2 WavefrontLoader::_findTextureCoordinate(std::vector<std::string> const &e) {
-    if (e.size() < 2 || e[1].compare("")) {
+    if (e.size() < 2 || !e[1].compare("")) {
         return ft::vec2(-1);
     }
-    size_t index = convertToInt(e[1]) -1;
+    size_t index = convertToInt(e[1]) - 1;
     if (index >= _v_texcoords.size()) {
         throw std::runtime_error("Invalid texture coordinate index in .obj file.");
     }
@@ -164,7 +164,7 @@ void WavefrontLoader::_calculateSurfaceNormals(std::vector<t_vbo_element> &point
 
 bool WavefrontLoader::_textureCoordinateIsZero(std::vector<t_vbo_element> const &points) {
     for (auto point : points) {
-        if (point.texCoords.x == -1) {
+        if (point.texCoords.x < 0) {
             return true;
         }
     }
