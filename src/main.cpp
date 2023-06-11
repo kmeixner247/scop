@@ -13,8 +13,8 @@ int main(int argc, char **argv) {
 	WavefrontLoader wavefrontData(argv[1]);
 	Window Window(WIDTH, HEIGHT, MOV_SPEED);
 	Texture texture(argv[2]);
-	Shader simpleShader("simple_vertexshader.glsl", "simple_fragmentshader.glsl");
-	Shader lightingShader("lighting_vertexshader.glsl", "lighting_fragmentshader.glsl");
+	Shader simpleShader("shaders/simple_vertexshader.glsl", "shaders/simple_fragmentshader.glsl");
+	Shader lightingShader("shaders/lighting_vertexshader.glsl", "shaders/lighting_fragmentshader.glsl");
     Scene myScene;
 
 	myScene.init(WIDTH, HEIGHT);
