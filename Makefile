@@ -12,7 +12,7 @@ SRCS =	src/main.cpp \
 		src/objects/WavefrontObject.cpp \
 		src/objects/Texture.cpp 
 
-LIBS = libglfw3.a
+LIBS = external/libglfw3.a
 
 CC = c++
 
