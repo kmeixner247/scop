@@ -5,14 +5,14 @@
 const GLint WIDTH = 800, HEIGHT = 600;
 const float MOV_SPEED = 0.05;
 
-int main() {
-	// if (argc != 3) {
-	// 	std::cout << "Please specify an object file (.obj) and a texture file (.bmp)" << std::endl;
-	// 	return -1;
-	// }
-	WavefrontLoader wavefrontData("resources/42.obj");
+int main(int argc, char **argv) {
+	if (argc != 3) {
+		std::cout << "Please specify an object file (.obj) and a texture file (.bmp)" << std::endl;
+		return -1;
+	}
+	WavefrontLoader wavefrontData(argv[1]);
 	Window Window(WIDTH, HEIGHT, MOV_SPEED);
-	Texture texture("resources/Carbon_02.bmp");
+	Texture texture(argv[2]);
 	Shader simpleShader("simple_vertexshader.glsl", "simple_fragmentshader.glsl");
 	Shader lightingShader("lighting_vertexshader.glsl", "lighting_fragmentshader.glsl");
     Scene myScene;
@@ -22,7 +22,7 @@ int main() {
 	myScene.loadMtllib(wavefrontData);
 	myScene.addShader(simpleShader);
 	myScene.addShader(lightingShader);
-	myScene.setLightPos(ft::vec3(0.5, 0, 2));
+	myScene.setLightPos(ft::vec3(1, 0, 1));
 	myScene.scaleTo(2);
     myScene.bind();
 	texture.bind();
